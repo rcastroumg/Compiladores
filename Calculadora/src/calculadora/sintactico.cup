@@ -1,0 +1,45 @@
+
+
+package calculadora;
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+
+:}
+
+action code {:
+    //AQUI VA CODIGO EN JAVA
+:}
+
+terminal String numero,suma,resta,multiplicacion,division,potencia,parAbre,parCierra;
+
+non terminal Integer I,E,T,G,F;
+
+start with I;
+
+I ::= E:e {:
+    System.out.println(e);
+:};
+
+E ::= E:e suma T:t {: RESULT = e + t; :}
+    | E:e resta T:t {: RESULT = e - t; :}
+    | T:t {: RESULT = t; :};
+
+T ::= T:t multiplicacion G:g {: RESULT = t * g; :}
+    | T:t division G:g {: RESULT = t / g; :}
+    | G:g {: RESULT = g; :};
+
+G ::= G:g potencia F:f {:
+    int res = g;
+    for(int n=0;n<f-1;n++)
+    {
+        res = res*g;
+    }
+    RESULT = res;
+:}
+    | F:f {: RESULT = f; :};
+
+F ::= numero:num {: RESULT = Integer.parseInt(num); :}
+    | parAbre E:e parCierra {: RESULT = e; :};
