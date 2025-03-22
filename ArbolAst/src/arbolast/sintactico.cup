@@ -17,6 +17,79 @@ parser code
 
 action code
 {:
+    private Nodo transforma_Switch_If(Nodo switchExpr, Nodo casesNode) {
+        // Verifica si el nodo "Cases" con multiples nodos
+        if (casesNode.valor.equals("cases")) {
+            // obtiene los nodos hijos
+            Nodo prevCases = casesNode.hijos.get(0);
+            Nodo currentCase = casesNode.hijos.get(1);
+            
+            // Obtiene las expresiones y las instrucciones
+            Nodo caseExpr = currentCase.hijos.get(0);
+            Nodo caseInsts = currentCase.hijos.get(1);
+            
+            // Crea el nodo de comparacion del if
+            Nodo comparison = new Nodo("==");
+            comparison.hijos.add(switchExpr);
+            comparison.hijos.add(caseExpr);
+            
+            // Crea el nodo If del case actual
+            Nodo ifNode = new Nodo("if");
+            ifNode.hijos.add(comparison);
+            ifNode.hijos.add(caseInsts);
+            
+            // Agrega el nodo Else, segun los siguientes Case de forma recursiva
+            Nodo elseNode = transforma_Switch_If(switchExpr, prevCases);
+            Nodo insts = new Nodo("instrucciones");
+            insts.hijos.add(elseNode);
+            ifNode.hijos.add(insts);
+            
+            return ifNode;
+        } 
+        // Valida si es un solo case
+        else if (casesNode.valor.equals("case1")) {
+            Nodo caseNode = casesNode.hijos.get(0);
+            Nodo caseExpr = caseNode.hijos.get(0);
+            Nodo caseInsts = caseNode.hijos.get(1);
+            
+            // Crea el nodo de comparacion del if
+            Nodo comparison = new Nodo("==");
+            comparison.hijos.add(switchExpr);
+            comparison.hijos.add(caseExpr);
+            
+            // Crea el nodo If del case actual
+            Nodo ifNode = new Nodo("if");
+            ifNode.hijos.add(comparison);
+            ifNode.hijos.add(caseInsts);
+            
+            return ifNode;
+        }
+        // Valida si tiene nodo default
+        else if (casesNode.valor.equals("default")) {
+            Nodo caseNode = casesNode.hijos.get(0);
+            Nodo caseExpr = caseNode.hijos.get(0);
+            Nodo caseInsts = caseNode.hijos.get(1);
+            
+            // Crea el nodo de comparacion del if
+            Nodo comparison = new Nodo("==");
+            comparison.hijos.add(switchExpr);
+            comparison.hijos.add(caseExpr);
+
+            // Crea el nodo default 
+            Nodo defaultNode = casesNode.hijos.get(1);
+            Nodo defaultInsts = defaultNode.hijos.get(0);
+            
+            // Crea el nodo If del case y le agrega como else el nodo default
+            Nodo ifNode = new Nodo("if");
+            ifNode.hijos.add(comparison);
+            ifNode.hijos.add(caseInsts);
+            ifNode.hijos.add(defaultInsts);
+                        
+            return ifNode;
+        }
+        
+        return new Nodo("error al transformar switch");
+    }
 :}
 
 terminal PARENTESIS_ABIERTO, PARENTESIS_CERRADO, COMA, IF, ELSE, END, WHILE,
@@ -156,14 +229,12 @@ RESULT = nodo;
 
 switch ::= SWITCH PARENTESIS_ABIERTO expresion:expr PARENTESIS_CERRADO LLAVE_ABIERTO cases:cases LLAVE_CERRADO
 {:
-Nodo nodo = new Nodo("switch");
-nodo.hijos.add(expr);
-nodo.hijos.add(cases);
-RESULT = nodo;
+Nodo result = transforma_Switch_If(expr, cases);
+RESULT = result;
 :}
     ;
 
-cases ::= cases:cases case:_case
+cases ::= case:_case cases:cases 
 {: 
 Nodo nodo = new Nodo("cases");
 nodo.hijos.add(cases);
@@ -176,9 +247,10 @@ Nodo nodo = new Nodo("case1");
 nodo.hijos.add(_case);
 RESULT = nodo;
 :}
-    | default:_def
+    | case:_case default:_def
 {: 
 Nodo nodo = new Nodo("default");
+nodo.hijos.add(_case);
 nodo.hijos.add(_def);
 RESULT = nodo;
 :}
@@ -186,18 +258,33 @@ RESULT = nodo;
 
 case ::= CASE expresion:expr DOS_PUNTOS instrucciones:insts END
 {:
-Nodo nodo = new Nodo("case2");
+Nodo nodo = new Nodo("case_data");
 nodo.hijos.add(expr);
 nodo.hijos.add(insts);
 RESULT = nodo;
-:};
+:}
+    | CASE expresion:expr DOS_PUNTOS instrucciones:insts
+{:
+Nodo nodo = new Nodo("case_data");
+nodo.hijos.add(expr);
+nodo.hijos.add(insts);
+RESULT = nodo;
+:}
+;
 
 default ::= DEFAULT DOS_PUNTOS instrucciones:insts END
 {:
 Nodo nodo = new Nodo("default");
 nodo.hijos.add(insts);
 RESULT = nodo;
-:};
+:}
+    | DEFAULT DOS_PUNTOS instrucciones:insts
+{:
+Nodo nodo = new Nodo("default");
+nodo.hijos.add(insts);
+RESULT = nodo;
+:}
+;
 
 
 
