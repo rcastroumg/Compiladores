@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/home/roberto/proyectos/github_umg/Compiladores/ArbolAst/src/arbolast/lexico.jflex</file>
+            <file>file:/home/roberto/proyectos/github_umg/Compiladores/ArbolAst/src/arbolast/Simbolo.java</file>
+            <file>file:/home/roberto/proyectos/github_umg/Compiladores/ArbolAst/src/arbolast/Nodo.java</file>
+            <file>file:/home/roberto/proyectos/github_umg/Compiladores/ArbolAst/src/arbolast/Interfaz.java</file>
+            <file>file:/home/roberto/proyectos/github_umg/Compiladores/ArbolAst/src/arbolast/AnalisisLexico.java</file>
+            <file>file:/home/roberto/proyectos/github_umg/Compiladores/ArbolAst/src/arbolast/readme.txt</file>
+            <file>file:/home/roberto/proyectos/github_umg/Compiladores/ArbolAst/src/arbolast/Variable.java</file>
+            <file>file:/home/roberto/proyectos/github_umg/Compiladores/ArbolAst/src/arbolast/ArbolAst.java</file>
+            <file>file:/home/roberto/proyectos/github_umg/Compiladores/ArbolAst/src/arbolast/sintactico.cup</file>
+            <file>file:/home/roberto/proyectos/github_umg/Compiladores/ArbolAst/src/arbolast/AnalisisSintactico.java</file>
+        </group>
+    </open-files>
+</project-private>
