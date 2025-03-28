@@ -131,7 +131,15 @@ public class Interfaz extends javax.swing.JFrame {
         Nodo instruccion;
         while (i < instrucciones.hijos.size()) {
             instruccion = instrucciones.hijos.get(i);
-            if (instruccion.valor.equals("asignacion")) {
+            if (instruccion.valor.equals("declaracion")) {
+                String id = instruccion.hijos.get(0).hijos.get(0).valor;
+                Object val = evaluarExpresion(instruccion.hijos.get(1));
+                Variable var = new Variable();
+                var.nombre = id;
+                var.valor = val;
+                variables.agregar(var);
+            } else if (instruccion.valor.equals("asignacion")) {
+                evaluarExpresion(instruccion.hijos.get(0));
                 String id = instruccion.hijos.get(0).hijos.get(0).valor;
                 Object val = evaluarExpresion(instruccion.hijos.get(1));
                 Variable var = new Variable();
@@ -173,6 +181,8 @@ public class Interfaz extends javax.swing.JFrame {
             case "valor":
                 if (aux.valor.equals("entero")) {
                     return Integer.valueOf(aux.hijos.get(0).valor);
+                } else if (aux.valor.equals("decimal")) {
+                    return Double.valueOf(aux.hijos.get(0).valor);
                 } else {
                     return aux.hijos.get(0).valor;
                 }
@@ -263,6 +273,8 @@ public class Interfaz extends javax.swing.JFrame {
                 Object segunda = evaluarExpresion(nodo.hijos.get(1));
                 if (primera instanceof Integer) {
                     return (Integer) primera + (Integer) segunda;
+                } else if(primera instanceof Double) {
+                    return (Double) primera + (Integer) segunda;
                 } else {
                     throw new Exception("No se reconoce el nodo");
                 }

@@ -93,20 +93,21 @@ action code
 :}
 
 terminal PARENTESIS_ABIERTO, PARENTESIS_CERRADO, COMA, 
+    DIM, COMO, TIPO,
     SI, ENTONCES, NO, FINSI,
     MIENTRAS, FINMIENTRAS,
     HACER, REPETIRMIENTRAS,
     PARA, HASTA, PASO, SIGUIENTE,
-    IF, ELSE, END, WHILE,
-    FOR, DO, LLAVE_ABIERTO, LLAVE_CERRADO, SWITCH, CASE, DEFAULT, DOS_PUNTOS,
+    SELECCIONAR, CASO, CONTRARIO, FINCASO, FINSELECCIONAR,
+    DOS_PUNTOS, PUNTO_COMA,
     CONCAT, PUTS, OR, AND, NOT, IGUAL_IGUAL, MENOR, MAYOR, IGUAL, MAS, 
-    ASTERISCO, PUNTO_COMA;
+    ASTERISCO;
 
-terminal String ENTERO, CADENA, ID;
+terminal String ENTERO, DECIMAL, CADENA, ID;
 
 non terminal inicio;
 
-non terminal Nodo instrucciones, instruccion, asignacion, if, while, for, 
+non terminal Nodo instrucciones, instruccion, asignacion, declaracion, if, while, for, 
     dowhile, switch, cases, case, default, puts, expresion, expresiones;
 
 precedence left OR;
@@ -126,13 +127,13 @@ parser.instrucciones = insts;
 :};
     
 
-instrucciones ::= instrucciones:insts instruccion:inst
+instrucciones ::= instrucciones:insts instruccion:inst PUNTO_COMA
 {:
 Nodo nodo = insts;
 nodo.hijos.add(inst);
 RESULT = nodo;
 :}
-    | instruccion:inst
+    | instruccion:inst PUNTO_COMA
 {:
 Nodo nodo = new Nodo("Instruccion");
 nodo.hijos.add(inst);
@@ -141,6 +142,10 @@ RESULT = nodo;
     ;
 
 instruccion ::= asignacion:inst
+{:
+RESULT = inst;
+:}
+    | declaracion:inst
 {:
 RESULT = inst;
 :}
@@ -172,7 +177,17 @@ RESULT = inst;
 Nodo n = new Nodo("Error");
 RESULT = n;
 :}
-    
+    ;
+
+declaracion ::= DIM ID:id COMO TIPO:tipo IGUAL expresion:expr
+{:
+Nodo nodoId = new Nodo("variable");
+nodoId.hijos.add(new Nodo(id));
+Nodo inst = new Nodo("declaracion");
+inst.hijos.add(nodoId);
+inst.hijos.add(expr);
+RESULT = inst;
+:}
     ;
 
 asignacion ::= ID:id IGUAL expresion:expr
@@ -186,14 +201,14 @@ RESULT = inst;
 :}
     ;
 
-if ::= SI expresion:expr ENTONCES instrucciones:insts FINSI PUNTO_COMA
+if ::= SI expresion:expr ENTONCES instrucciones:insts FINSI
 {:
 Nodo nodo = new Nodo("if");
 nodo.hijos.add(expr);
 nodo.hijos.add(insts);
 RESULT = nodo;
 :}
-    | SI expresion:expr ENTONCES instrucciones:insts NO instrucciones:insts2 FINSI PUNTO_COMA
+    | SI expresion:expr ENTONCES instrucciones:insts NO instrucciones:insts2 FINSI
 {:
 Nodo nodo = new Nodo("if");
 nodo.hijos.add(expr);
@@ -203,7 +218,7 @@ RESULT = nodo;
 :}
     ;
 
-while ::= MIENTRAS expresion:expr instrucciones:insts FINMIENTRAS PUNTO_COMA
+while ::= MIENTRAS expresion:expr instrucciones:insts FINMIENTRAS
 {:
 Nodo nodo = new Nodo("while");
 nodo.hijos.add(expr);
@@ -212,7 +227,7 @@ RESULT = nodo;
 :}
     ;
 
-for ::= PARA asignacion:inicia HASTA ENTERO:compara PASO ENTERO:salto instrucciones:insts SIGUIENTE ID:id PUNTO_COMA
+for ::= PARA asignacion:inicia HASTA ENTERO:compara PASO ENTERO:salto instrucciones:insts SIGUIENTE ID:id
 {:
 Nodo nodo = new Nodo("for");
 // Nodo de asignacion inicial
@@ -259,7 +274,7 @@ RESULT = nodo;
 :}
     ;
 
-dowhile ::= HACER instrucciones:insts REPETIRMIENTRAS expresion:expr PUNTO_COMA
+dowhile ::= HACER instrucciones:insts REPETIRMIENTRAS expresion:expr
 {:
 Nodo nodo = new Nodo("dowhile");
 nodo.hijos.add(expr);
@@ -268,7 +283,7 @@ RESULT = nodo;
 :}
     ;
 
-switch ::= SWITCH PARENTESIS_ABIERTO expresion:expr PARENTESIS_CERRADO LLAVE_ABIERTO cases:cases LLAVE_CERRADO
+switch ::= SELECCIONAR CASO expresion:expr cases:cases FINSELECCIONAR
 {:
 Nodo result = transforma_Switch_If(expr, cases);
 RESULT = result;
@@ -297,14 +312,7 @@ RESULT = nodo;
 :}
 ;
 
-case ::= CASE expresion:expr DOS_PUNTOS instrucciones:insts END
-{:
-Nodo nodo = new Nodo("case_data");
-nodo.hijos.add(expr);
-nodo.hijos.add(insts);
-RESULT = nodo;
-:}
-    | CASE expresion:expr DOS_PUNTOS instrucciones:insts
+case ::= CASO expresion:expr DOS_PUNTOS instrucciones:insts FINCASO PUNTO_COMA
 {:
 Nodo nodo = new Nodo("case_data");
 nodo.hijos.add(expr);
@@ -313,13 +321,7 @@ RESULT = nodo;
 :}
 ;
 
-default ::= DEFAULT DOS_PUNTOS instrucciones:insts END
-{:
-Nodo nodo = new Nodo("default");
-nodo.hijos.add(insts);
-RESULT = nodo;
-:}
-    | DEFAULT DOS_PUNTOS instrucciones:insts
+default ::= CASO CONTRARIO DOS_PUNTOS instrucciones:insts FINCASO PUNTO_COMA
 {:
 Nodo nodo = new Nodo("default");
 nodo.hijos.add(insts);
@@ -414,6 +416,14 @@ Nodo nodo = new Nodo("valor");
 Nodo tipo = new Nodo("entero");
 nodo.hijos.add(tipo);
 tipo.hijos.add(new Nodo(entero));
+RESULT = nodo;
+:}
+    | DECIMAL:decimal
+{:
+Nodo nodo = new Nodo("valor");
+Nodo tipo = new Nodo("decimal");
+nodo.hijos.add(tipo);
+tipo.hijos.add(new Nodo(decimal));
 RESULT = nodo;
 :}
     | CADENA:cadena

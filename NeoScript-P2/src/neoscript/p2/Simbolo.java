@@ -8,56 +8,57 @@ package neoscript.p2;
 /** CUP generated class containing symbol constants. */
 public class Simbolo {
   /* terminals */
-  public static final int CONCAT = 29;
-  public static final int LLAVE_ABIERTO = 23;
-  public static final int ENTERO = 41;
-  public static final int SI = 5;
-  public static final int CASE = 26;
-  public static final int DOS_PUNTOS = 28;
-  public static final int ENTONCES = 6;
-  public static final int ASTERISCO = 39;
+  public static final int CASO = 21;
+  public static final int TIPO = 7;
+  public static final int CONCAT = 27;
+  public static final int ENTERO = 38;
+  public static final int SI = 8;
+  public static final int DOS_PUNTOS = 25;
+  public static final int ENTONCES = 9;
+  public static final int ASTERISCO = 37;
   public static final int PARENTESIS_ABIERTO = 2;
-  public static final int FOR = 21;
-  public static final int HASTA = 14;
-  public static final int SIGUIENTE = 16;
-  public static final int NOT = 33;
-  public static final int AND = 32;
-  public static final int IGUAL = 37;
-  public static final int FINMIENTRAS = 10;
-  public static final int OR = 31;
-  public static final int MIENTRAS = 9;
-  public static final int PASO = 15;
-  public static final int IF = 17;
-  public static final int ID = 43;
-  public static final int PUNTO_COMA = 40;
-  public static final int IGUAL_IGUAL = 34;
+  public static final int HASTA = 17;
+  public static final int SIGUIENTE = 19;
+  public static final int NOT = 31;
+  public static final int AND = 30;
+  public static final int IGUAL = 35;
+  public static final int FINMIENTRAS = 13;
+  public static final int OR = 29;
+  public static final int MIENTRAS = 12;
+  public static final int CONTRARIO = 22;
+  public static final int PASO = 18;
+  public static final int COMO = 6;
+  public static final int SELECCIONAR = 20;
+  public static final int ID = 41;
+  public static final int PUNTO_COMA = 26;
+  public static final int IGUAL_IGUAL = 32;
+  public static final int DECIMAL = 39;
+  public static final int DIM = 5;
   public static final int EOF = 0;
   public static final int error = 1;
+  public static final int FINCASO = 23;
   public static final int COMA = 4;
-  public static final int CADENA = 42;
-  public static final int MENOR = 35;
-  public static final int SWITCH = 25;
-  public static final int MAYOR = 36;
-  public static final int NO = 7;
-  public static final int PUTS = 30;
-  public static final int ELSE = 18;
-  public static final int LLAVE_CERRADO = 24;
-  public static final int WHILE = 20;
-  public static final int DEFAULT = 27;
-  public static final int HACER = 11;
-  public static final int END = 19;
+  public static final int CADENA = 40;
+  public static final int MENOR = 33;
+  public static final int MAYOR = 34;
+  public static final int FINSELECCIONAR = 24;
+  public static final int NO = 10;
+  public static final int PUTS = 28;
+  public static final int HACER = 14;
   public static final int PARENTESIS_CERRADO = 3;
-  public static final int PARA = 13;
-  public static final int REPETIRMIENTRAS = 12;
-  public static final int FINSI = 8;
-  public static final int DO = 22;
-  public static final int MAS = 38;
+  public static final int PARA = 16;
+  public static final int REPETIRMIENTRAS = 15;
+  public static final int FINSI = 11;
+  public static final int MAS = 36;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
   "PARENTESIS_ABIERTO",
   "PARENTESIS_CERRADO",
   "COMA",
+  "DIM",
+  "COMO",
+  "TIPO",
   "SI",
   "ENTONCES",
   "NO",
@@ -70,18 +71,13 @@ public class Simbolo {
   "HASTA",
   "PASO",
   "SIGUIENTE",
-  "IF",
-  "ELSE",
-  "END",
-  "WHILE",
-  "FOR",
-  "DO",
-  "LLAVE_ABIERTO",
-  "LLAVE_CERRADO",
-  "SWITCH",
-  "CASE",
-  "DEFAULT",
+  "SELECCIONAR",
+  "CASO",
+  "CONTRARIO",
+  "FINCASO",
+  "FINSELECCIONAR",
   "DOS_PUNTOS",
+  "PUNTO_COMA",
   "CONCAT",
   "PUTS",
   "OR",
@@ -93,8 +89,8 @@ public class Simbolo {
   "IGUAL",
   "MAS",
   "ASTERISCO",
-  "PUNTO_COMA",
   "ENTERO",
+  "DECIMAL",
   "CADENA",
   "ID"
   };

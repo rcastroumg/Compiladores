@@ -15,8 +15,10 @@ import java_cup.runtime.ComplexSymbolFactory.Location;
 
 digito  =   [0-9]
 entero  =   {digito}+
+decimal =   {digito}+ "." {digito}+
 letra   =   [a-zA-Z]
 id      =   ({letra} | "_") ({letra} | "_" | {digito})*
+tipo    =   (int|string|char|boolean|double)
 espacio =   (" " | \r | \n | \t | \f)+
 
 %{
@@ -61,10 +63,6 @@ espacio =   (" " | \r | \n | \t | \f)+
 
     ")"     {   return symbol("PARENTESIS_CERRADO",Simbolo.PARENTESIS_CERRADO);    }
 
-    "{"     {   return symbol("LLAVE_ABIERTO",Simbolo.LLAVE_ABIERTO);    }
-
-    "}"     {   return symbol("LLAVE_CERRADO",Simbolo.LLAVE_CERRADO);    }
-
     ","     {   return symbol("COMA",Simbolo.COMA);                  }
 
     ":"     {   return symbol("DOS_PUNTOS",Simbolo.DOS_PUNTOS);                  }
@@ -95,11 +93,19 @@ espacio =   (" " | \r | \n | \t | \f)+
 
     "repetirmientras" {   return symbol("REPETIRMIENTRAS",Simbolo.REPETIRMIENTRAS);                 }
 
-    "switch" {   return symbol("SWITCH",Simbolo.SWITCH);                 }
+    "seleccionar" {   return symbol("SELECCIONAR",Simbolo.SELECCIONAR);                 }
 
-    "case" {   return symbol("CASE",Simbolo.CASE);                 }
+    "caso" {   return symbol("CASO",Simbolo.CASO);                 }
 
-    "default" {   return symbol("DEFAULT",Simbolo.DEFAULT);                 }
+    "contrario" {   return symbol("CONTRARIO",Simbolo.CONTRARIO);                 }
+
+    "fincaso" {   return symbol("FINCASO",Simbolo.FINCASO);                 }
+
+    "finseleccionar" {   return symbol("FINSELECCIONAR",Simbolo.FINSELECCIONAR);                 }
+
+    "dim" {   return symbol("DIM",Simbolo.DIM);                 }
+
+    "como" {   return symbol("COMO",Simbolo.COMO);                 }
 
     "concat"    {   return symbol("CONCAT",Simbolo.CONCAT);                }
 
@@ -123,7 +129,11 @@ espacio =   (" " | \r | \n | \t | \f)+
 
     "*"     {   return symbol("ASTERISCO",Simbolo.ASTERISCO);             }
 
+    {tipo}      {   return symbol("TIPO",Simbolo.TIPO,yytext());             }
+
     {entero}    {   return symbol("ENTERO",Simbolo.ENTERO, yytext());      }
+    
+    {decimal}    {   return symbol("DECIMAL",Simbolo.DECIMAL, yytext());      }
 
     [\"] ~[\"]  {
                 String t = yytext();
@@ -135,6 +145,8 @@ espacio =   (" " | \r | \n | \t | \f)+
     {espacio}   { }
 
     "/*" ~"*/"  { }
+
+    "#" [^\n]* { }
 
     .   {   error(yytext());      }
 
