@@ -5,7 +5,6 @@
         <group>
             <file>file:/home/roberto/proyectos/github_umg/Compiladores/ArbolAst/src/arbolast/lexico.jflex</file>
             <file>file:/home/roberto/proyectos/github_umg/Compiladores/ArbolAst/src/arbolast/Interfaz.java</file>
-            <file>file:/home/roberto/proyectos/github_umg/Compiladores/ArbolAst/src/arbolast/AnalisisLexico.java</file>
             <file>file:/home/roberto/proyectos/github_umg/Compiladores/ArbolAst/src/arbolast/readme.txt</file>
             <file>file:/home/roberto/proyectos/github_umg/Compiladores/ArbolAst/src/arbolast/sintactico.cup</file>
         </group>
