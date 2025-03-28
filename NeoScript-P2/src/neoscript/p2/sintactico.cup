@@ -212,16 +212,48 @@ RESULT = nodo;
 :}
     ;
 
-for ::= PARA asignacion:asign HASTA expresion:expr PASO asignacion:asign2 instrucciones:insts SIGUIENTE ID:id PUNTO_COMA
+for ::= PARA asignacion:inicia HASTA ENTERO:compara PASO ENTERO:salto instrucciones:insts SIGUIENTE ID:id PUNTO_COMA
 {:
 Nodo nodo = new Nodo("for");
+// Nodo de asignacion inicial
 Nodo asignFor = new Nodo("Instruccion");
-asignFor.hijos.add(asign);
+asignFor.hijos.add(inicia);
 nodo.hijos.add(asignFor);
-nodo.hijos.add(expr);
+
+// nodo de comparacion
+Nodo nodoVariable = new Nodo("variable");
+nodoVariable.hijos.add(new Nodo(id));
+
+Nodo nodoValorCompara = new Nodo("valor");
+Nodo tipoValorCompara = new Nodo("entero");
+nodoValorCompara.hijos.add(tipoValorCompara);
+tipoValorCompara.hijos.add(new Nodo(compara));
+
+Nodo nodoMenorIgual = new Nodo("<=");
+nodoMenorIgual.hijos.add(nodoVariable);
+nodoMenorIgual.hijos.add(nodoValorCompara);
+
+nodo.hijos.add(nodoMenorIgual);
+
+// nodo de salto
+Nodo nodoValorSalto = new Nodo("valor");
+Nodo tipoValorSalto = new Nodo("entero");
+nodoValorSalto.hijos.add(tipoValorSalto);
+tipoValorSalto.hijos.add(new Nodo(salto));
+
+Nodo nodoMas = new Nodo("+");
+nodoMas.hijos.add(nodoVariable);
+nodoMas.hijos.add(nodoValorSalto);
+
+Nodo inst = new Nodo("asignacion");
+inst.hijos.add(nodoVariable);
+inst.hijos.add(nodoMas);
+
 asignFor = new Nodo("Instruccion");
-asignFor.hijos.add(asign2);
+asignFor.hijos.add(inst);
 nodo.hijos.add(asignFor);
+
+// nodo de instrucciones
 nodo.hijos.add(insts);
 RESULT = nodo;
 :}

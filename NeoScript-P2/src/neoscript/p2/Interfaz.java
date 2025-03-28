@@ -152,9 +152,9 @@ public class Interfaz extends javax.swing.JFrame {
                 }
             } else if (instruccion.valor.equals("for")) {
                 ejecutar(instruccion.hijos.get(0));
-                while ((Boolean) evaluarExpresion(instruccion.hijos.get(1))) {
-                    ejecutar(instruccion.hijos.get(2));
+                while ((Boolean) evaluarExpresion(instruccion.hijos.get(1))) {                    
                     ejecutar(instruccion.hijos.get(3));                    
+                    ejecutar(instruccion.hijos.get(2));
                 }
             } else if (instruccion.valor.equals("dowhile")) {
                 do {
@@ -223,6 +223,16 @@ public class Interfaz extends javax.swing.JFrame {
                 Object segunda = evaluarExpresion(nodo.hijos.get(1));
                 if (primera instanceof Integer) {
                     return (Integer) primera < (Integer) segunda;
+                } else {
+                    throw new Exception("No se reconoce el nodo");
+                }
+            }
+            case "<=":
+            {
+                Object primera = evaluarExpresion(nodo.hijos.get(0));
+                Object segunda = evaluarExpresion(nodo.hijos.get(1));
+                if (primera instanceof Integer) {
+                    return (Integer) primera <= (Integer) segunda;
                 } else {
                     throw new Exception("No se reconoce el nodo");
                 }
