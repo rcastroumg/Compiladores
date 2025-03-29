@@ -93,17 +93,17 @@ action code
 :}
 
 terminal PARENTESIS_ABIERTO, PARENTESIS_CERRADO, COMA, 
-    DIM, COMO, TIPO,
+    DIM, COMO,
     SI, ENTONCES, NO, FINSI,
     MIENTRAS, FINMIENTRAS,
     HACER, REPETIRMIENTRAS,
     PARA, HASTA, PASO, SIGUIENTE,
     SELECCIONAR, CASO, CONTRARIO, FINCASO, FINSELECCIONAR,
-    DOS_PUNTOS, PUNTO_COMA,
-    CONCAT, PUTS, OR, AND, NOT, IGUAL_IGUAL, MENOR, MAYOR, IGUAL, MAS, 
+    DOS_PUNTOS, PUNTO_COMA, AMPERSAND,
+    IMPRIMIR, OR, AND, NOT, IGUAL_IGUAL, MENOR, MAYOR, IGUAL, MAS, 
     ASTERISCO;
 
-terminal String ENTERO, DECIMAL, CADENA, ID;
+terminal String ENTERO, DOUBLE, CADENA, TIPO, ID;
 
 non terminal inicio;
 
@@ -183,6 +183,7 @@ declaracion ::= DIM ID:id COMO TIPO:tipo IGUAL expresion:expr
 {:
 Nodo nodoId = new Nodo("variable");
 nodoId.hijos.add(new Nodo(id));
+nodoId.hijos.add(new Nodo(tipo));
 Nodo inst = new Nodo("declaracion");
 inst.hijos.add(nodoId);
 inst.hijos.add(expr);
@@ -331,10 +332,12 @@ RESULT = nodo;
 
 
 
-puts ::= PUTS expresion:expr
+puts ::= IMPRIMIR expresiones:expr
 {:
 Nodo nodo =  new Nodo("puts");
-nodo.hijos.add(expr);
+Nodo nodoConcat = new Nodo("concatenar");
+nodoConcat.hijos.add(expr);
+nodo.hijos.add(nodoConcat);
 RESULT = nodo;
 :}
     ;
@@ -398,12 +401,6 @@ RESULT = nodo;
 {:
 RESULT = expr;
 :}
-    | CONCAT PARENTESIS_ABIERTO expresiones:exprs PARENTESIS_CERRADO
-{:
-Nodo nodo = new Nodo("concatenar");
-nodo.hijos.add(exprs);
-RESULT = nodo;
-:}
     | ID:id
 {:
 Nodo nodo = new Nodo("variable");
@@ -413,30 +410,30 @@ RESULT = nodo;
     | ENTERO:entero
 {:
 Nodo nodo = new Nodo("valor");
-Nodo tipo = new Nodo("entero");
+Nodo tipo = new Nodo("int");
 nodo.hijos.add(tipo);
 tipo.hijos.add(new Nodo(entero));
 RESULT = nodo;
 :}
-    | DECIMAL:decimal
+    | DOUBLE:double_
 {:
 Nodo nodo = new Nodo("valor");
-Nodo tipo = new Nodo("decimal");
+Nodo tipo = new Nodo("double");
 nodo.hijos.add(tipo);
-tipo.hijos.add(new Nodo(decimal));
+tipo.hijos.add(new Nodo(double_));
 RESULT = nodo;
 :}
     | CADENA:cadena
 {:
 Nodo nodo = new Nodo("valor");
-Nodo tipo = new Nodo("cadena");
+Nodo tipo = new Nodo("string");
 nodo.hijos.add(tipo);
 tipo.hijos.add(new Nodo(cadena));
 RESULT = nodo;
 :}
     ;
 
-expresiones ::= expresiones:exprs COMA expresion:expr
+expresiones ::= expresiones:exprs AMPERSAND expresion:expr
 {:
 Nodo nodo = exprs;
 nodo.hijos.add(expr);

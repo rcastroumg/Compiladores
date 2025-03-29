@@ -15,10 +15,10 @@ import java_cup.runtime.ComplexSymbolFactory.Location;
 
 digito  =   [0-9]
 entero  =   {digito}+
-decimal =   {digito}+ "." {digito}+
+double =   {digito}+ "." {digito}+
 letra   =   [a-zA-Z]
 id      =   ({letra} | "_") ({letra} | "_" | {digito})*
-tipo    =   (int|string|char|boolean|double)
+tipo    =   ([iI][nN][tT]|[sS][tT][rR][iI][nN][gG]|[cH][hH][aA][rR]|[bB][oO][oO][lL][eE][aA][nN]|[dD][oO][uU][bB][lL][eE])
 espacio =   (" " | \r | \n | \t | \f)+
 
 %{
@@ -68,48 +68,48 @@ espacio =   (" " | \r | \n | \t | \f)+
     ":"     {   return symbol("DOS_PUNTOS",Simbolo.DOS_PUNTOS);                  }
 
     ";"     {   return symbol("PUNTO_COMA",Simbolo.PUNTO_COMA);                  }
+
+    "&"     {   return symbol("AMPERSAND",Simbolo.AMPERSAND);                  }
     
-    "si"    {   return symbol("SI",Simbolo.SI);                    }
+    [sS][iI]    {   return symbol("SI",Simbolo.SI);                    }
 
-    "entonces"    {   return symbol("ENTONCES",Simbolo.ENTONCES);                    }
+    [eE][nN][tT][oO][nN][cC][eE][sS]  {   return symbol("ENTONCES",Simbolo.ENTONCES);                    }
 
-    "no"  {   return symbol("NO",Simbolo.NO);                  }
+    [nN][oO]  {   return symbol("NO",Simbolo.NO);                  }
 
-    "finsi"   {   return symbol("FINSI",Simbolo.FINSI);                   }
+    [fF][iI][nN][sS][iI]  {   return symbol("FINSI",Simbolo.FINSI);                   }
 
-    "mientras" {   return symbol("MIENTRAS",Simbolo.MIENTRAS);                 }
+    [mM][iI][eE][nN][tT][rR][aA][sS] {   return symbol("MIENTRAS",Simbolo.MIENTRAS);                 }
 
-    "finmientras" {   return symbol("FINMIENTRAS",Simbolo.FINMIENTRAS);                 }
+    [fF][iI][nN][mM][iI][eE][nN][tT][rR][aA][sS] {   return symbol("FINMIENTRAS",Simbolo.FINMIENTRAS);                 }
 
-    "para" {   return symbol("PARA",Simbolo.PARA);                 }
+    [pP][aA][rR][aA] {   return symbol("PARA",Simbolo.PARA);                 }
 
-    "hasta" {   return symbol("HASTA",Simbolo.HASTA);                 }
+    [hH][aA][sS][tT][aA] {   return symbol("HASTA",Simbolo.HASTA);                 }
 
-    "paso" {   return symbol("PASO",Simbolo.PASO);                 }
+    [pP][aA][sS][oO] {   return symbol("PASO",Simbolo.PASO);                 }
 
-    "siguiente" {   return symbol("SIGUIENTE",Simbolo.SIGUIENTE);                 }
+    [sS][iI][gG][uU][iI][eE][nN][tT][eE] {   return symbol("SIGUIENTE",Simbolo.SIGUIENTE);                 }
 
-    "hacer" {   return symbol("HACER",Simbolo.HACER);                 }
+    [hH][aA][cC][eE][rR] {   return symbol("HACER",Simbolo.HACER);                 }
 
-    "repetirmientras" {   return symbol("REPETIRMIENTRAS",Simbolo.REPETIRMIENTRAS);                 }
+    [rR][eE][pP][eE][tT][iI][rR][mM][iI][eE][nN][tT][rR][aA][sS] {   return symbol("REPETIRMIENTRAS",Simbolo.REPETIRMIENTRAS);                 }
 
-    "seleccionar" {   return symbol("SELECCIONAR",Simbolo.SELECCIONAR);                 }
+    [sS][eE][lL][eE][cC][cC][iI][oO][nN][aA][rR] {   return symbol("SELECCIONAR",Simbolo.SELECCIONAR);                 }
 
-    "caso" {   return symbol("CASO",Simbolo.CASO);                 }
+    [cC][aA][sS][oO] {   return symbol("CASO",Simbolo.CASO);                 }
 
-    "contrario" {   return symbol("CONTRARIO",Simbolo.CONTRARIO);                 }
+    [cC][oO][nN][tT][rR][aA][rR][iI][oO] {   return symbol("CONTRARIO",Simbolo.CONTRARIO);                 }
 
-    "fincaso" {   return symbol("FINCASO",Simbolo.FINCASO);                 }
+    [fF][iI][nN][cC][aA][sS][oO] {   return symbol("FINCASO",Simbolo.FINCASO);                 }
 
-    "finseleccionar" {   return symbol("FINSELECCIONAR",Simbolo.FINSELECCIONAR);                 }
+    [fF][iI][nN][sS][eE][lL][eE][cC][cC][iI][oO][nN][aA][rR] {   return symbol("FINSELECCIONAR",Simbolo.FINSELECCIONAR);                 }
 
-    "dim" {   return symbol("DIM",Simbolo.DIM);                 }
+    [dD][iI][mM] {   return symbol("DIM",Simbolo.DIM);                 }
 
-    "como" {   return symbol("COMO",Simbolo.COMO);                 }
+    [cC][oO][mM][oO] {   return symbol("COMO",Simbolo.COMO);                 }
 
-    "concat"    {   return symbol("CONCAT",Simbolo.CONCAT);                }
-
-    "puts"  {   return symbol("PUTS",Simbolo.PUTS);                  }
+    [iI][mM][pP][rR][iI][mM][iI][rR]  {   return symbol("IMPRIMIR",Simbolo.IMPRIMIR);                  }
 
     "or"    {   return symbol("OR",Simbolo.OR);                    }
 
@@ -133,7 +133,7 @@ espacio =   (" " | \r | \n | \t | \f)+
 
     {entero}    {   return symbol("ENTERO",Simbolo.ENTERO, yytext());      }
     
-    {decimal}    {   return symbol("DECIMAL",Simbolo.DECIMAL, yytext());      }
+    {double}    {   return symbol("DOUBLE",Simbolo.DOUBLE, yytext());      }
 
     [\"] ~[\"]  {
                 String t = yytext();

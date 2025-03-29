@@ -8,48 +8,48 @@ package neoscript.p2;
 /** CUP generated class containing symbol constants. */
 public class Simbolo {
   /* terminals */
-  public static final int CASO = 21;
-  public static final int TIPO = 7;
-  public static final int CONCAT = 27;
-  public static final int ENTERO = 38;
-  public static final int SI = 8;
-  public static final int DOS_PUNTOS = 25;
-  public static final int ENTONCES = 9;
-  public static final int ASTERISCO = 37;
+  public static final int CASO = 20;
+  public static final int TIPO = 40;
+  public static final int IMPRIMIR = 27;
+  public static final int ENTERO = 37;
+  public static final int SI = 7;
+  public static final int DOUBLE = 38;
+  public static final int DOS_PUNTOS = 24;
+  public static final int ENTONCES = 8;
+  public static final int ASTERISCO = 36;
   public static final int PARENTESIS_ABIERTO = 2;
-  public static final int HASTA = 17;
-  public static final int SIGUIENTE = 19;
-  public static final int NOT = 31;
-  public static final int AND = 30;
-  public static final int IGUAL = 35;
-  public static final int FINMIENTRAS = 13;
-  public static final int OR = 29;
-  public static final int MIENTRAS = 12;
-  public static final int CONTRARIO = 22;
-  public static final int PASO = 18;
+  public static final int HASTA = 16;
+  public static final int SIGUIENTE = 18;
+  public static final int NOT = 30;
+  public static final int AND = 29;
+  public static final int IGUAL = 34;
+  public static final int FINMIENTRAS = 12;
+  public static final int OR = 28;
+  public static final int MIENTRAS = 11;
+  public static final int CONTRARIO = 21;
+  public static final int PASO = 17;
   public static final int COMO = 6;
-  public static final int SELECCIONAR = 20;
+  public static final int SELECCIONAR = 19;
+  public static final int AMPERSAND = 26;
   public static final int ID = 41;
-  public static final int PUNTO_COMA = 26;
-  public static final int IGUAL_IGUAL = 32;
-  public static final int DECIMAL = 39;
+  public static final int PUNTO_COMA = 25;
+  public static final int IGUAL_IGUAL = 31;
   public static final int DIM = 5;
   public static final int EOF = 0;
   public static final int error = 1;
-  public static final int FINCASO = 23;
+  public static final int FINCASO = 22;
   public static final int COMA = 4;
-  public static final int CADENA = 40;
-  public static final int MENOR = 33;
-  public static final int MAYOR = 34;
-  public static final int FINSELECCIONAR = 24;
-  public static final int NO = 10;
-  public static final int PUTS = 28;
-  public static final int HACER = 14;
+  public static final int CADENA = 39;
+  public static final int MENOR = 32;
+  public static final int MAYOR = 33;
+  public static final int FINSELECCIONAR = 23;
+  public static final int NO = 9;
+  public static final int HACER = 13;
   public static final int PARENTESIS_CERRADO = 3;
-  public static final int PARA = 16;
-  public static final int REPETIRMIENTRAS = 15;
-  public static final int FINSI = 11;
-  public static final int MAS = 36;
+  public static final int PARA = 15;
+  public static final int REPETIRMIENTRAS = 14;
+  public static final int FINSI = 10;
+  public static final int MAS = 35;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -58,7 +58,6 @@ public class Simbolo {
   "COMA",
   "DIM",
   "COMO",
-  "TIPO",
   "SI",
   "ENTONCES",
   "NO",
@@ -78,8 +77,8 @@ public class Simbolo {
   "FINSELECCIONAR",
   "DOS_PUNTOS",
   "PUNTO_COMA",
-  "CONCAT",
-  "PUTS",
+  "AMPERSAND",
+  "IMPRIMIR",
   "OR",
   "AND",
   "NOT",
@@ -90,8 +89,9 @@ public class Simbolo {
   "MAS",
   "ASTERISCO",
   "ENTERO",
-  "DECIMAL",
+  "DOUBLE",
   "CADENA",
+  "TIPO",
   "ID"
   };
 }

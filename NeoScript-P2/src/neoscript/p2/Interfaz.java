@@ -133,10 +133,13 @@ public class Interfaz extends javax.swing.JFrame {
             instruccion = instrucciones.hijos.get(i);
             if (instruccion.valor.equals("declaracion")) {
                 String id = instruccion.hijos.get(0).hijos.get(0).valor;
+                String tipoVar = instruccion.hijos.get(0).hijos.get(1).valor.toLowerCase();
                 Object val = evaluarExpresion(instruccion.hijos.get(1));
                 Variable var = new Variable();
+                validarTipos(tipoVar,instruccion.hijos.get(1).hijos.get(0).valor);
                 var.nombre = id;
                 var.valor = val;
+                var.tipo = tipoVar;
                 variables.agregar(var);
             } else if (instruccion.valor.equals("asignacion")) {
                 evaluarExpresion(instruccion.hijos.get(0));
@@ -179,9 +182,9 @@ public class Interfaz extends javax.swing.JFrame {
         Nodo aux = nodo.hijos.get(0);
         switch (nodo.valor) {
             case "valor":
-                if (aux.valor.equals("entero")) {
+                if (aux.valor.equals("int")) {
                     return Integer.valueOf(aux.hijos.get(0).valor);
-                } else if (aux.valor.equals("decimal")) {
+                } else if (aux.valor.equals("double")) {
                     return Double.valueOf(aux.hijos.get(0).valor);
                 } else {
                     return aux.hijos.get(0).valor;
@@ -199,6 +202,87 @@ public class Interfaz extends javax.swing.JFrame {
                     t += String.valueOf(evaluarExpresion(aux.hijos.get(i)));
                 }
                 return t;
+            case "==": case "<": case "<=": case ">": case ">=": case "*": case "+":
+            case "-": case "/": case "^": case "%":
+            {
+                Object primera = evaluarExpresion(nodo.hijos.get(0));
+                Object segunda = evaluarExpresion(nodo.hijos.get(1));
+                if(primera.getClass().equals(segunda.getClass())) // || 
+                //   ((primera instanceof Integer && segunda instanceof Double) || 
+                //    (primera instanceof Double && segunda instanceof Integer)))
+                {
+                    switch (nodo.valor) {
+                        case "==":
+                        {
+                            return Objects.equals(primera, segunda);
+                        }
+                        case "<":
+                        {
+                            if (primera instanceof Integer) {
+                                return ((Integer) primera < (Integer) segunda);
+                            } else if (primera instanceof Double ) {
+                                return (Double) primera < (Double) segunda;
+                            } else {
+                                throw new Exception("No se reconoce el nodo");
+                            }
+                        }
+                        case "<=":
+                        {
+                            if (primera instanceof Integer) {
+                                return ((Integer) primera <= (Integer) segunda);
+                            } else if (primera instanceof Double ) {
+                                return (Double) primera <= (Double) segunda;
+                            } else {
+                                throw new Exception("No se reconoce el nodo");
+                            }
+                        }
+                        case ">":
+                        {
+                            if (primera instanceof Integer) {
+                                return ((Integer) primera > (Integer) segunda);
+                            } else if (primera instanceof Double ) {
+                                return (Double) primera > (Double) segunda;
+                            } else {
+                                throw new Exception("No se reconoce el nodo");
+                            }
+                        }
+                        case ">=":
+                        {
+                            if (primera instanceof Integer) {
+                                return ((Integer) primera >= (Integer) segunda);
+                            } else if (primera instanceof Double ) {
+                                return (Double) primera >= (Double) segunda;
+                            } else {
+                                throw new Exception("No se reconoce el nodo");
+                            }
+                        }
+                        case "*":
+                        {
+                            if (primera instanceof Integer) {
+                                return ((Integer) primera * (Integer) segunda);
+                            } else if (primera instanceof Double ) {
+                                return (Double) primera * (Double) segunda;
+                            } else {
+                                throw new Exception("No se reconoce el nodo");
+                            }
+                        }
+                        case "+":
+                        {
+                            if (primera instanceof Integer) {
+                                return ((Integer) primera + (Integer) segunda);
+                            } else if (primera instanceof Double ) {
+                                return (Double) primera + (Double) segunda;
+                            } else {
+                                throw new Exception("No se reconoce el nodo");
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception("Los tipos de operandos no coinciden");
+                }
+            }
             case "and":
             {
                 Boolean primera = (Boolean) evaluarExpresion(nodo.hijos.get(0));
@@ -213,38 +297,59 @@ public class Interfaz extends javax.swing.JFrame {
             }
             case "not":
                 return !(Boolean) evaluarExpresion(nodo.hijos.get(0));
-            case "==":
+            /*case "==":
             {
                 Object primera = evaluarExpresion(nodo.hijos.get(0));
                 Object segunda = evaluarExpresion(nodo.hijos.get(1));
-                if (primera instanceof Integer) {
-                    return Objects.equals((Integer) primera, (Integer) segunda);
-                } else if (primera instanceof String) {
-                    return ((String) primera).equals((String) segunda);
-                } else if (primera instanceof Boolean) {
-                    return Objects.equals((Boolean) primera, (Boolean) segunda);
-                } else {
-                    throw new Exception("No se reconoce el nodo");
+                if(primera.getClass().equals(segunda.getClass()))
+                {
+                    if (primera instanceof Integer) {
+                        return Objects.equals((Integer) primera, (Integer) segunda);
+                    } else if (primera instanceof String) {
+                        return ((String) primera).equals((String) segunda);
+                    } else if (primera instanceof Boolean) {
+                        return Objects.equals((Boolean) primera, (Boolean) segunda);
+                    } else {
+                        throw new Exception("No se reconoce el nodo");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Los tipos de operandos no coinciden");
                 }
             }
             case "<":
             {
                 Object primera = evaluarExpresion(nodo.hijos.get(0));
                 Object segunda = evaluarExpresion(nodo.hijos.get(1));
-                if (primera instanceof Integer) {
-                    return (Integer) primera < (Integer) segunda;
-                } else {
-                    throw new Exception("No se reconoce el nodo");
+                if(primera.getClass().equals(segunda.getClass()))
+                {
+                    if (primera instanceof Integer) {
+                        return (Integer) primera < (Integer) segunda;
+                    } else {
+                        throw new Exception("No se reconoce el nodo");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Los tipos de operandos no coinciden");
                 }
             }
             case "<=":
             {
                 Object primera = evaluarExpresion(nodo.hijos.get(0));
                 Object segunda = evaluarExpresion(nodo.hijos.get(1));
-                if (primera instanceof Integer) {
-                    return (Integer) primera <= (Integer) segunda;
-                } else {
-                    throw new Exception("No se reconoce el nodo");
+                if(primera.getClass().equals(segunda.getClass()))
+                {
+                    if (primera instanceof Integer) {
+                        return (Integer) primera <= (Integer) segunda;
+                    } else {
+                        throw new Exception("No se reconoce el nodo");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Los tipos de operandos no coinciden");
                 }
             }
             case ">":
@@ -278,9 +383,20 @@ public class Interfaz extends javax.swing.JFrame {
                 } else {
                     throw new Exception("No se reconoce el nodo");
                 }
-            }
+            }*/
             default:
-                throw new Exception("No se reconoce el nodo");
+                throw new Exception("No se reconoce el nodo "+nodo.valor);
+        }
+    }
+    
+    public Boolean validarTipos(String _tipo1, String _tipo2) throws Exception {
+        if(_tipo1.equals(_tipo2))
+        {
+            return true;
+        }
+        else
+        {
+            throw new Exception("Los tipos de operandos no coinciden");
         }
     }
 
