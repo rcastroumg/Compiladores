@@ -131,7 +131,15 @@ boolean =   ("true" | "false")
 
     "+"     {   return symbol("MAS",Simbolo.MAS);                   }
 
+    "-"     {   return symbol("MENOS",Simbolo.MENOS);               }
+
     "*"     {   return symbol("ASTERISCO",Simbolo.ASTERISCO);             }
+
+    "/"     {   return symbol("SLASH",Simbolo.SLASH);                     }
+
+    "^"     {   return symbol("POTENCIA",Simbolo.POTENCIA);             }
+
+    "%"     {   return symbol("MODULO",Simbolo.MODULO);                 }
 
     {tipo}      {   return symbol("TIPO",Simbolo.TIPO,yytext());             }
 
