@@ -24,6 +24,7 @@ public class Simbolo {
   public static final int AND = 29;
   public static final int IGUAL = 34;
   public static final int FINMIENTRAS = 12;
+  public static final int CARACTER = 42;
   public static final int OR = 28;
   public static final int MIENTRAS = 11;
   public static final int CONTRARIO = 21;
@@ -45,6 +46,7 @@ public class Simbolo {
   public static final int FINSELECCIONAR = 23;
   public static final int NO = 9;
   public static final int HACER = 13;
+  public static final int BOOLEANO = 43;
   public static final int PARENTESIS_CERRADO = 3;
   public static final int PARA = 15;
   public static final int REPETIRMIENTRAS = 14;
@@ -92,7 +94,9 @@ public class Simbolo {
   "DOUBLE",
   "CADENA",
   "TIPO",
-  "ID"
+  "ID",
+  "CARACTER",
+  "BOOLEANO"
   };
 }
 

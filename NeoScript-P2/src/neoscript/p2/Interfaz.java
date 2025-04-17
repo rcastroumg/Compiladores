@@ -4,10 +4,15 @@
  */
 package neoscript.p2;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.nio.file.Files;
 import java.util.Objects;
 import java_cup.runtime.ComplexSymbolFactory;
+import javax.swing.JFileChooser;
 
 /**
  *
@@ -19,11 +24,19 @@ public class Interfaz extends javax.swing.JFrame {
     private Nodo instrucciones;
     private String salida;
     
+    NumeroLinea numeroLinea;
+    
     /**
      * Creates new form Interfaz
      */
     public Interfaz() {
         initComponents();
+        inicializador();
+    }
+    
+    private void inicializador(){
+        numeroLinea = new NumeroLinea(jtpCode);
+        jScrollPane3.setRowHeaderView(numeroLinea);
     }
 
     /**
@@ -35,21 +48,18 @@ public class Interfaz extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea2 = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jta_output = new javax.swing.JTextArea();
+        btnArchivo = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jtpCode = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jTextArea1.setText("/*calculo de 0 + 1 + 2 + ... + n - 2 + n - 1 + n,\npara un entero n*/\nn = 5\nb = 1\ni = 0\nwhile b < n + 1\n    i = i + b\n    b = b + 1\nend\nputs concat(\"sum( n = \", n, \" ) = \", i)");
-        jTextArea1.setToolTipText("");
-        jScrollPane1.setViewportView(jTextArea1);
 
         jTextArea2.setEditable(false);
         jTextArea2.setColumns(20);
@@ -67,48 +77,73 @@ public class Interfaz extends javax.swing.JFrame {
             }
         });
 
+        jta_output.setEditable(false);
+        jta_output.setColumns(20);
+        jta_output.setRows(5);
+        jScrollPane4.setViewportView(jta_output);
+
+        btnArchivo.setText("Abrir archivo");
+        btnArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnArchivoActionPerformed(evt);
+            }
+        });
+
+        jScrollPane3.setViewportView(jtpCode);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel1)))
-                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnArchivo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 83, Short.MAX_VALUE)
+                        .addComponent(jButton1)
+                        .addGap(146, 146, 146))
+                    .addComponent(jScrollPane3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
+                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel2)
+                    .addComponent(jButton1)
+                    .addComponent(btnArchivo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE))
                     .addComponent(jScrollPane2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        jta_output.setText("");
         
         try {
-            Reader reader = new StringReader(jTextArea1.getText());
+            notificar_err("---------------Analisis iniciado---------------");
+            Reader reader = new StringReader(jtpCode.getText());
             AnalisisLexico scanner = new AnalisisLexico(reader);
             ComplexSymbolFactory sf = new ComplexSymbolFactory();
             scanner.setSymbolFactory(sf);
@@ -119,12 +154,30 @@ public class Interfaz extends javax.swing.JFrame {
             instrucciones = parser.instrucciones;
             ejecutar(instrucciones);
             jTextArea2.setText(salida);
-            //jTextArea2.setText("Hola");
+            notificar_err("---------------Analisis finalizado---------------");
         } catch (Exception exception) {
-            System.out.println(exception.getMessage());
+            System.out.println("ERR: "+exception.getMessage());
+            notificar_err(exception.getMessage());
         }
         
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btnArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnArchivoActionPerformed
+        // TODO add your handling code here:
+        JFileChooser chooser = new JFileChooser();
+        chooser.showOpenDialog(null);
+        File archivo = new File(chooser.getSelectedFile().getAbsolutePath());
+        
+        try {
+            String ST = new String(Files.readAllBytes(archivo.toPath()));
+            jtpCode.setText(ST);
+        } catch (FileNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+    }//GEN-LAST:event_btnArchivoActionPerformed
 
    private void ejecutar(Nodo instrucciones) throws Exception {
         int i = 0;
@@ -132,25 +185,32 @@ public class Interfaz extends javax.swing.JFrame {
         while (i < instrucciones.hijos.size()) {
             instruccion = instrucciones.hijos.get(i);
             if (instruccion.valor.equals("declaracion")) {
-                String id = instruccion.hijos.get(0).hijos.get(0).valor;
-                String tipoVar = instruccion.hijos.get(0).hijos.get(1).valor.toLowerCase();
-                Object val = evaluarExpresion(instruccion.hijos.get(1));
-                Variable var = new Variable();
-                validarTipos(tipoVar,instruccion.hijos.get(1).hijos.get(0).valor);
-                var.nombre = id;
-                var.valor = val;
-                var.tipo = tipoVar;
-                variables.agregar(var);
+                int c = 0;
+                while(c < instruccion.hijos.get(0).hijos.get(0).hijos.size()){
+                    Nodo decVar = instruccion.hijos.get(0).hijos.get(0).hijos.get(c);
+                    String id = decVar.valor;
+                    String tipoVar = instruccion.hijos.get(0).hijos.get(1).valor.toLowerCase();
+                    Variable val = evaluarExpresion(instruccion.hijos.get(1));
+                    //Object val = evaluarExpresion(instruccion.hijos.get(1));
+                    Variable var = new Variable();
+                    validarTipos(tipoVar,val.tipo);
+                    var.nombre = id;
+                    var.valor = val.valor;
+                    var.tipo = tipoVar;
+                    variables.agregar(var);
+                    c++;
+                }
             } else if (instruccion.valor.equals("asignacion")) {
                 evaluarExpresion(instruccion.hijos.get(0));
                 String id = instruccion.hijos.get(0).hijos.get(0).valor;
-                Object val = evaluarExpresion(instruccion.hijos.get(1));
+                Variable val = evaluarExpresion(instruccion.hijos.get(1));
                 Variable var = new Variable();
                 var.nombre = id;
-                var.valor = val;
+                var.valor = val.valor;
+                var.tipo = val.tipo;
                 variables.agregar(var);
             } else if (instruccion.valor.equals("if")) {
-                if ((Boolean) evaluarExpresion(instruccion.hijos.get(0))) {
+                if ((Boolean) evaluarExpresion(instruccion.hijos.get(0)).valor) {
                     ejecutar(instruccion.hijos.get(1));
                 } else {
                     if (instruccion.hijos.size() == 3) {
@@ -158,120 +218,161 @@ public class Interfaz extends javax.swing.JFrame {
                     }
                 }
             } else if (instruccion.valor.equals("while")) {
-                while ((Boolean) evaluarExpresion(instruccion.hijos.get(0))) {
+                while ((Boolean) evaluarExpresion(instruccion.hijos.get(0)).valor) {
                     ejecutar(instruccion.hijos.get(1));
                 }
             } else if (instruccion.valor.equals("for")) {
                 ejecutar(instruccion.hijos.get(0));
-                while ((Boolean) evaluarExpresion(instruccion.hijos.get(1))) {                    
+                while ((Boolean) evaluarExpresion(instruccion.hijos.get(1)).valor) {                    
                     ejecutar(instruccion.hijos.get(3));                    
                     ejecutar(instruccion.hijos.get(2));
                 }
             } else if (instruccion.valor.equals("dowhile")) {
                 do {
                     ejecutar(instruccion.hijos.get(1));
-                } while ((Boolean) evaluarExpresion(instruccion.hijos.get(0)));                
+                } while ((Boolean) evaluarExpresion(instruccion.hijos.get(0)).valor);                
             } else if (instruccion.valor.equals("puts")) {
-                salida += evaluarExpresion(instruccion.hijos.get(0))+"\n";
+                salida += evaluarExpresion(instruccion.hijos.get(0)).valor+"\n";
             }
             i++;
         }
     }
 
-    private Object evaluarExpresion(Nodo nodo) throws Exception {
+    private Variable evaluarExpresion(Nodo nodo) throws Exception {
         Nodo aux = nodo.hijos.get(0);
+        Variable var = new Variable();
         switch (nodo.valor) {
             case "valor":
+                var.tipo = aux.valor;
                 if (aux.valor.equals("int")) {
-                    return Integer.valueOf(aux.hijos.get(0).valor);
+                    var.valor = Integer.valueOf(aux.hijos.get(0).valor);
+                    return var;
                 } else if (aux.valor.equals("double")) {
-                    return Double.valueOf(aux.hijos.get(0).valor);
+                    var.valor = Double.valueOf(aux.hijos.get(0).valor);
+                    return var;
+                } else if (aux.valor.equals("char")) {
+                    var.valor = aux.hijos.get(0).valor.charAt(0);
+                    return var;
+                } else if (aux.valor.equals("boolean")) {
+                    var.valor = Boolean.valueOf(aux.hijos.get(0).valor);
+                    return var;
                 } else {
-                    return aux.hijos.get(0).valor;
+                    var.valor = aux.hijos.get(0).valor;
+                    return var;
                 }
             case "variable":
-                Variable var = variables.buscar(aux.valor);
-                if (var == null) {
-                    throw new Exception("No se ha declarado la variable");
+                Variable varb = variables.buscar(aux.valor);
+                if (varb == null) {
+                    throw new Exception("No se ha declarado la variable: "+aux.valor);
                 } else {
-                    return var.valor;
+                    var.tipo = varb.tipo;
+                    var.valor = varb.valor;
+                    return var;
                 }
             case "concatenar":
+                var.tipo = "string";
                 String t = "";
                 for (int i = 0; i < aux.hijos.size(); i++) {
-                    t += String.valueOf(evaluarExpresion(aux.hijos.get(i)));
+                    t += String.valueOf(evaluarExpresion(aux.hijos.get(i)).valor);
                 }
-                return t;
+                var.valor = t;
+                return var;
             case "==": case "<": case "<=": case ">": case ">=": case "*": case "+":
             case "-": case "/": case "^": case "%":
             {
-                Object primera = evaluarExpresion(nodo.hijos.get(0));
-                Object segunda = evaluarExpresion(nodo.hijos.get(1));
-                if(primera.getClass().equals(segunda.getClass())) // || 
+                Variable primera = evaluarExpresion(nodo.hijos.get(0));
+                Variable segunda = evaluarExpresion(nodo.hijos.get(1));
+                if(primera.tipo.equals(segunda.tipo)) // || 
                 //   ((primera instanceof Integer && segunda instanceof Double) || 
                 //    (primera instanceof Double && segunda instanceof Integer)))
                 {
                     switch (nodo.valor) {
                         case "==":
                         {
-                            return Objects.equals(primera, segunda);
+                            var.tipo = primera.tipo;
+                            var.valor = Objects.equals(primera.valor, segunda.valor);
+                            return var;
                         }
                         case "<":
                         {
-                            if (primera instanceof Integer) {
-                                return ((Integer) primera < (Integer) segunda);
-                            } else if (primera instanceof Double ) {
-                                return (Double) primera < (Double) segunda;
+                            if (primera.valor instanceof Integer) {
+                                var.tipo = primera.tipo;
+                                var.valor = ((Integer) primera.valor < (Integer) segunda.valor);
+                                return var;
+                            } else if (primera.valor instanceof Double ) {
+                                var.tipo = primera.tipo;
+                                var.valor = (Double) primera.valor < (Double) segunda.valor;
+                                return var;
                             } else {
                                 throw new Exception("No se reconoce el nodo");
                             }
                         }
                         case "<=":
                         {
-                            if (primera instanceof Integer) {
-                                return ((Integer) primera <= (Integer) segunda);
-                            } else if (primera instanceof Double ) {
-                                return (Double) primera <= (Double) segunda;
+                            if (primera.valor instanceof Integer) {
+                                var.tipo = primera.tipo;
+                                var.valor = ((Integer) primera.valor <= (Integer) segunda.valor);
+                                return var;
+                            } else if (primera.valor instanceof Double ) {
+                                var.tipo = primera.tipo;
+                                var.valor = (Double) primera.valor <= (Double) segunda.valor;
+                                return var;
                             } else {
                                 throw new Exception("No se reconoce el nodo");
                             }
                         }
                         case ">":
                         {
-                            if (primera instanceof Integer) {
-                                return ((Integer) primera > (Integer) segunda);
-                            } else if (primera instanceof Double ) {
-                                return (Double) primera > (Double) segunda;
+                            if (primera.valor instanceof Integer) {
+                                var.tipo = primera.tipo;
+                                var.valor = ((Integer) primera.valor > (Integer) segunda.valor);
+                                return var;
+                            } else if (primera.valor instanceof Double ) {
+                                var.tipo = primera.tipo;
+                                var.valor = (Double) primera.valor > (Double) segunda.valor;
+                                return var;
                             } else {
                                 throw new Exception("No se reconoce el nodo");
                             }
                         }
                         case ">=":
                         {
-                            if (primera instanceof Integer) {
-                                return ((Integer) primera >= (Integer) segunda);
-                            } else if (primera instanceof Double ) {
-                                return (Double) primera >= (Double) segunda;
+                            if (primera.valor instanceof Integer) {
+                                var.tipo = primera.tipo;
+                                var.valor = ((Integer) primera.valor >= (Integer) segunda.valor);
+                                return var;
+                            } else if (primera.valor instanceof Double ) {
+                                var.tipo = primera.tipo;
+                                var.valor = (Double) primera.valor >= (Double) segunda.valor;
+                                return var;
                             } else {
                                 throw new Exception("No se reconoce el nodo");
                             }
                         }
                         case "*":
                         {
-                            if (primera instanceof Integer) {
-                                return ((Integer) primera * (Integer) segunda);
-                            } else if (primera instanceof Double ) {
-                                return (Double) primera * (Double) segunda;
+                            if (primera.valor instanceof Integer) {
+                                var.tipo = primera.tipo;
+                                var.valor = ((Integer) primera.valor * (Integer) segunda.valor);
+                                return var;
+                            } else if (primera.valor instanceof Double ) {
+                                var.tipo = primera.tipo;
+                                var.valor = (Double) primera.valor * (Double) segunda.valor;
+                                return var;
                             } else {
                                 throw new Exception("No se reconoce el nodo");
                             }
                         }
                         case "+":
                         {
-                            if (primera instanceof Integer) {
-                                return ((Integer) primera + (Integer) segunda);
-                            } else if (primera instanceof Double ) {
-                                return (Double) primera + (Double) segunda;
+                            if (primera.valor instanceof Integer) {
+                                var.tipo = primera.tipo;
+                                var.valor = ((Integer) primera.valor + (Integer) segunda.valor);
+                                return var;
+                            } else if (primera.valor instanceof Double ) {
+                                var.tipo = primera.tipo;
+                                var.valor = (Double) primera.valor + (Double) segunda.valor;
+                                return var;
                             } else {
                                 throw new Exception("No se reconoce el nodo");
                             }
@@ -280,23 +381,29 @@ public class Interfaz extends javax.swing.JFrame {
                 }
                 else
                 {
-                    throw new Exception("Los tipos de operandos no coinciden");
+                    throw new Exception("No se puede convertir "+ primera.tipo +" en "+ segunda.tipo);
                 }
             }
             case "and":
             {
-                Boolean primera = (Boolean) evaluarExpresion(nodo.hijos.get(0));
-                Boolean segunda = (Boolean) evaluarExpresion(nodo.hijos.get(1));
-                return primera == true && segunda == true;
+                var.tipo = "boolean";
+                Boolean primera = (Boolean) evaluarExpresion(nodo.hijos.get(0)).valor;
+                Boolean segunda = (Boolean) evaluarExpresion(nodo.hijos.get(1)).valor;
+                var.valor = primera == true && segunda == true;
+                return var;
             }
             case "or":
             {
-                Boolean primera = (Boolean) evaluarExpresion(nodo.hijos.get(0));
-                Boolean segunda = (Boolean) evaluarExpresion(nodo.hijos.get(1));
-                return primera == true || segunda == true;
+                var.tipo = "boolean";
+                Boolean primera = (Boolean) evaluarExpresion(nodo.hijos.get(0)).valor;
+                Boolean segunda = (Boolean) evaluarExpresion(nodo.hijos.get(1)).valor;
+                var.valor = primera == true || segunda == true;
+                return var;
             }
             case "not":
-                return !(Boolean) evaluarExpresion(nodo.hijos.get(0));
+                var.tipo = "boolean";
+                var.valor = !(Boolean) evaluarExpresion(nodo.hijos.get(0)).valor;
+                return var;
             /*case "==":
             {
                 Object primera = evaluarExpresion(nodo.hijos.get(0));
@@ -396,17 +503,28 @@ public class Interfaz extends javax.swing.JFrame {
         }
         else
         {
-            throw new Exception("Los tipos de operandos no coinciden");
+            throw new Exception("No se puede convertir "+ _tipo1 +" en "+ _tipo2);
         }
+    }
+    
+    public static void notificar(String cad){
+        jta_output.append(cad+"\n");
+    }
+    
+    public static void notificar_err(String cad){
+        jta_output.append(cad+"\n");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnArchivo;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTextArea jTextArea2;
+    private static javax.swing.JTextArea jta_output;
+    private javax.swing.JTextPane jtpCode;
     // End of variables declaration//GEN-END:variables
 }

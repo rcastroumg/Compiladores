@@ -12,5 +12,6 @@ public class Variable {
     public String nombre;
     public Object valor;
     public String tipo;
+    public String ambito;
 }
 

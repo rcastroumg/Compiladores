@@ -2,6 +2,7 @@ package neoscript.p2;
 import java_cup.runtime.Symbol;
 import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.ComplexSymbolFactory.Location;
+import neoscript.p2.Interfaz;
 
 %%
 
@@ -18,8 +19,9 @@ entero  =   {digito}+
 double =   {digito}+ "." {digito}+
 letra   =   [a-zA-Z]
 id      =   ({letra} | "_") ({letra} | "_" | {digito})*
-tipo    =   ([iI][nN][tT]|[sS][tT][rR][iI][nN][gG]|[cH][hH][aA][rR]|[bB][oO][oO][lL][eE][aA][nN]|[dD][oO][uU][bB][lL][eE])
+tipo    =   ([iI][nN][tT] | [sS][tT][rR][iI][nN][gG] | [cH][hH][aA][rR] | [bB][oO][oO][lL][eE][aA][nN] | [dD][oO][uU][bB][lL][eE])
 espacio =   (" " | \r | \n | \t | \f)+
+boolean =   ("true" | "false")
 
 %{
 //variables, metodos y funciones que necesite (codigo java)
@@ -45,7 +47,9 @@ espacio =   (" " | \r | \n | \t | \f)+
       return symbolFactory.newSymbol(name, sym, left, right,val);
   }
   private void error(String message) {
-    System.out.println("Error en linea "+(yyline+1)+", columna "+(yycolumn+1)+" caracter: "+message);
+    System.out.println("Error lexico en linea "+(yyline+1)+", columna "+(yycolumn+1)+" caracter: "+message);
+    String errLex = "Error lexico en linea "+(yyline+1)+", columna "+(yycolumn+1)+" caracter: "+message;
+    Interfaz.notificar_err(errLex);
   }
 
 
@@ -67,7 +71,7 @@ espacio =   (" " | \r | \n | \t | \f)+
 
     ":"     {   return symbol("DOS_PUNTOS",Simbolo.DOS_PUNTOS);                  }
 
-    ";"     {   return symbol("PUNTO_COMA",Simbolo.PUNTO_COMA);                  }
+    ";"     {   return symbol("PUNTO_COMA",Simbolo.PUNTO_COMA,yytext());                  }
 
     "&"     {   return symbol("AMPERSAND",Simbolo.AMPERSAND);                  }
     
@@ -135,9 +139,16 @@ espacio =   (" " | \r | \n | \t | \f)+
     
     {double}    {   return symbol("DOUBLE",Simbolo.DOUBLE, yytext());      }
 
+    {boolean}    {   return symbol("BOOLEANO",Simbolo.BOOLEANO, yytext());      }
+
     [\"] ~[\"]  {
                 String t = yytext();
                 return symbol("CADENA",Simbolo.CADENA, t.substring(1, t.length() - 1));
+                }
+
+    [\'] [^\'\\] [\']  {
+                String t = yytext();
+                return symbol("CARACTER",Simbolo.CARACTER, t.substring(1, t.length() - 1));
                 }
 
     {id}    {   return symbol("ID",Simbolo.ID, yytext());          }

@@ -1,22 +1,28 @@
 package neoscript.p2;
 import java_cup.runtime.Symbol;
+import neoscript.p2.Interfaz;
 
 parser code
 {:
     public Nodo instrucciones;
-    @Override
+    
     public void syntax_error(Symbol s){
-        System.out.println("Error en simbolo: "+s.value+", "+s.left+", "+s.right);
+        System.out.println("Error sintactico en simbolo: "+s.value+", "+s.left+", "+s.right);
+        Interfaz.notificar_err("Error sintactico en simbolo: "+s.value+", linea "+s.left+", columna "+s.right);
     }
 
-    @Override
-    public void unrecovered_syntax_error(Symbol s){
-        System.out.println("Error en simbolo: "+s.value+", "+s.left+", "+s.right);
+    
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        System.out.println("Error sintactico en simbolo: "+s.value+", "+s.left+", "+s.right);
+        Interfaz.notificar_err("Error sintactico en simbolo: "+s.value+", linea "+s.left+", columna "+s.right);
     }
 :}
 
 action code
 {:
+    public String ambitoActual = "";
+    public int ambitoConteo = 0;
+
     private Nodo transforma_Switch_If(Nodo switchExpr, Nodo casesNode) {
         // Verifica si el nodo "Cases" con multiples nodos
         if (casesNode.valor.equals("cases")) {
@@ -103,12 +109,12 @@ terminal PARENTESIS_ABIERTO, PARENTESIS_CERRADO, COMA,
     IMPRIMIR, OR, AND, NOT, IGUAL_IGUAL, MENOR, MAYOR, IGUAL, MAS, 
     ASTERISCO;
 
-terminal String ENTERO, DOUBLE, CADENA, TIPO, ID;
+terminal String ENTERO, DOUBLE, CADENA, TIPO, ID, CARACTER, BOOLEANO;
 
 non terminal inicio;
 
 non terminal Nodo instrucciones, instruccion, asignacion, declaracion, if, while, for, 
-    dowhile, switch, cases, case, default, puts, expresion, expresiones;
+    dowhile, switch, cases, case, default, puts, expresion, expresiones, ids;
 
 precedence left OR;
 precedence left AND;
@@ -151,45 +157,70 @@ RESULT = inst;
 :}
     | if:inst
 {:
+ambitoActual = "if";
+ambitoConteo++;
 RESULT = inst;
 :}
     | while:inst
 {:
+ambitoActual = "while";
+ambitoConteo++;
 RESULT = inst;
 :}
     | for:inst
 {:
+ambitoActual = "for";
+ambitoConteo++;
 RESULT = inst;
 :}
     | dowhile:inst
 {:
+ambitoActual = "dowhile";
+ambitoConteo++;
 RESULT = inst;
 :}
     | switch:inst
 {:
+ambitoActual = "switch";
+ambitoConteo++;
 RESULT = inst;
 :}
     | puts:inst
 {:
 RESULT = inst;
 :}
-| error{:
+    | error {:
 Nodo n = new Nodo("Error");
 RESULT = n;
 :}
     ;
 
-declaracion ::= DIM ID:id COMO TIPO:tipo IGUAL expresion:expr
+declaracion ::= DIM ids:ids COMO TIPO:tipo IGUAL expresion:expr
 {:
-Nodo nodoId = new Nodo("variable");
-nodoId.hijos.add(new Nodo(id));
+Nodo nodoId = new Nodo("variables");
+nodoId.hijos.add(ids);
 nodoId.hijos.add(new Nodo(tipo));
+nodoId.hijos.add(new Nodo(ambitoActual+ambitoConteo));
 Nodo inst = new Nodo("declaracion");
 inst.hijos.add(nodoId);
 inst.hijos.add(expr);
 RESULT = inst;
 :}
     ;
+
+ids ::= ids:ids COMA ID:id
+{:
+Nodo nodo = new Nodo("ids");
+nodo.hijos.add(ids);
+nodo.hijos.add(new Nodo(id));
+RESULT = nodo;
+:}
+    | ID:id
+{:
+Nodo nodo = new Nodo("ids");
+nodo.hijos.add(new Nodo(id));
+RESULT = nodo;
+:} ;
 
 asignacion ::= ID:id IGUAL expresion:expr
 {:
@@ -241,7 +272,7 @@ Nodo nodoVariable = new Nodo("variable");
 nodoVariable.hijos.add(new Nodo(id));
 
 Nodo nodoValorCompara = new Nodo("valor");
-Nodo tipoValorCompara = new Nodo("entero");
+Nodo tipoValorCompara = new Nodo("int");
 nodoValorCompara.hijos.add(tipoValorCompara);
 tipoValorCompara.hijos.add(new Nodo(compara));
 
@@ -253,7 +284,7 @@ nodo.hijos.add(nodoMenorIgual);
 
 // nodo de salto
 Nodo nodoValorSalto = new Nodo("valor");
-Nodo tipoValorSalto = new Nodo("entero");
+Nodo tipoValorSalto = new Nodo("int");
 nodoValorSalto.hijos.add(tipoValorSalto);
 tipoValorSalto.hijos.add(new Nodo(salto));
 
@@ -429,6 +460,22 @@ Nodo nodo = new Nodo("valor");
 Nodo tipo = new Nodo("string");
 nodo.hijos.add(tipo);
 tipo.hijos.add(new Nodo(cadena));
+RESULT = nodo;
+:}
+    | CARACTER:caracter
+{:
+Nodo nodo = new Nodo("valor");
+Nodo tipo = new Nodo("char");
+nodo.hijos.add(tipo);
+tipo.hijos.add(new Nodo(caracter));
+RESULT = nodo;
+:}
+    | BOOLEANO:boolean_
+{:
+Nodo nodo = new Nodo("valor");
+Nodo tipo = new Nodo("boolean");
+nodo.hijos.add(tipo);
+tipo.hijos.add(new Nodo(boolean_));
 RESULT = nodo;
 :}
     ;
