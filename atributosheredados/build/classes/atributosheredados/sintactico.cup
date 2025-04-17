@@ -1,0 +1,79 @@
+package atributosheredados;
+import java.io.*;
+import java_cup.runtime.*;
+import java.util.Stack;//pila para atributos heredados
+parser code
+{:
+// METODOS Y VARIABLES GLOBALES DEL PARSER, PUEDEN SER PUBLICAS O PRIVADAS
+
+public String resultado="";
+            
+public void syntax_error(Symbol s){
+/**Metodo al que se llama automaticamente ante algun error sintactico.*/
+        System.out.println("Error Sintactico en la Linea " + (s.right+1) +" Columna "+s.left+ ". Identificador " +s.value + " no reconocido." );
+}
+             
+public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+/**Metodo al que se llama en el momento en que ya no es posible una recuperacion de errores.*/
+        System.out.println("Error Sintactico en la Linea " + (s.right+1)+ "Columna "+s.left+". Identificador " + s.value + " no reconocido.");
+}
+
+
+:}
+action code
+{:
+//METODOS Y VARIABLES QUE SOLO PUEDEN SER ACCEDIDAS DENTRO DEL PARSER ATRIBUTOS HEREDADOS
+//FORMA CORRECTA DE HEREDAR UN VALOR SE HACE CON UNA PILA
+Stack <String> tipo = new Stack <String>();//atributo heredado tipo de variable
+:}
+terminal String booleanT,floatT,doubleT,charT,intT,shortT,longT,pcoma,coma,id;
+non terminal String  I, T, D, L, LISTA;
+
+start with I;
+
+I ::= LISTA:l{:
+            parser.resultado=l;
+:};
+
+LISTA::= D:d LISTA:l {:
+        RESULT = d + l;
+:}
+        |D:d{:
+        RESULT = d;
+:};
+
+D::= T:t {:tipo.add(t);//atributo heredado:} L:l pcoma{:
+            RESULT = l;
+            tipo.pop();//se saca el valor de la pila para terminar la herencia
+:};
+
+
+L ::= L:l coma id:a {:
+            RESULT = l + a + " es "+tipo.peek()+"\n";
+            //con tipo.peek() se toma el valor actual del atributo heredado
+:}
+                |id:a{:
+                    RESULT = a + " es "+tipo.peek()+"\n";                    
+:};
+
+T ::= intT{:
+    RESULT="int";
+:}
+        |booleanT{:
+    RESULT="boolean";
+:}
+        |floatT{:
+    RESULT="float";
+:}
+        |doubleT{:
+    RESULT="double";
+:}
+        |charT{:
+    RESULT="char";
+:}
+        |shortT{:
+    RESULT="short";
+:}
+        |longT{:
+    RESULT="long";
+:};
