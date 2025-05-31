@@ -1,0 +1,235 @@
+package generacion3d;
+import java_cup.runtime.*;
+import java.util.LinkedList;
+parser code
+{:
+
+     
+public LinkedList<ErrorCompilador> lista=new LinkedList<ErrorCompilador>();
+            /**Metodo al que se llama automaticamente ante algun error sintactico.*/
+public void syntax_error(Symbol s){
+       lista.add(new ErrorCompilador(s.right+1,s.left,"Error sintactico Identificador " +s.value + " no reconocido." ));
+    }
+public void semantico(int right,int left, String descripcion){
+lista.add(new ErrorCompilador(right+1,left,"Error Semantico "+descripcion));
+}
+             /**Metodo al que se llama en el momento en que ya no es posible una recuperacion de errores.*/
+public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        lista.add(new ErrorCompilador(s.right+1,s.left,"Error sintactico Identificador " +s.value + " no reconocido." ));
+    }
+public String resultado="";
+:}
+action code {: 
+int gtemp=-1;
+int geti=-1;
+String heredado="";
+public String temporal(){
+gtemp++;
+return "T"+gtemp;
+}
+
+public String etiqueta(){
+geti++;
+return "L"+geti;
+}
+
+:} 
+
+
+terminal String verdadero,igualIgual,diferente,iden,falso,numero,si,sino,aparen,cparen,allave,cllave,menor,mayor,opy,opo,opn,igual,pcoma,mas,menos,por,div;
+terminal String seleccionar, caso, salir, defecto, dpuntos;
+terminal String imprimir, mientras, para;
+
+non terminal tresd INICIA, L, E, S, CASES, CASE, DEFAULT;
+
+precedence left opo;
+precedence left opy;
+precedence left opn;
+precedence left mayor,menor,igualIgual,diferente;
+precedence left mas,menos;
+precedence left por,div;
+
+start with INICIA; 
+
+INICIA::= S:a {:
+parser.resultado="#include <iostream>\n" + "using namespace std;\n\n";
+parser.resultado+="int main(){\n";
+parser.resultado+=a.cod;
+parser.resultado+="return 0;\n}";
+:};
+
+S ::= S:s L:l {:
+    RESULT = s;
+    RESULT.cod += l.cod;
+
+:}
+    |L:l{:
+    RESULT = l;
+:};
+
+L::= 	iden:a igual E:b pcoma{:
+	RESULT=b;
+	RESULT.cod+=a+"= "+b.valor+";\n";
+:}
+        |imprimir aparen iden:a cparen pcoma {:
+	RESULT=new tresd();
+	RESULT.cod+="cout<<"+a+"<<endl;\n";
+:}
+	|si E:a allave S:b cllave {:
+	RESULT=a;
+	RESULT.cod+=a.lv+":\n"+b.cod+a.lf+":\n";
+:}
+        |si E:a allave S:b cllave sino allave S:c cllave {:
+	RESULT=a;
+        String lff = etiqueta();
+	RESULT.cod+=a.lv+":\n"+b.cod+"goto "+lff+";\n"+a.lf+":\n"+c.cod+lff+":\n";
+:}
+        |seleccionar aparen iden:v {: heredado=v; :} cparen allave CASES:cases cllave {:
+	RESULT=new tresd();
+	RESULT.cod=cases.cod;
+:}
+        |mientras aparen E:a cparen allave S:b cllave {:
+	RESULT=new tresd();
+        String tmp = etiqueta();
+	RESULT.cod+=tmp+":\n"+a.cod+a.lv+":\n"+b.cod+"goto "+tmp+";\n"+a.lf+":\n";
+:}
+        |para aparen iden:a igual E:b pcoma E:c pcoma iden:d igual E:e cparen allave S:f cllave {:
+	RESULT=new tresd();
+        RESULT.cod+=a+"= "+b.valor+";\n";
+        String tmp = etiqueta();
+        RESULT.cod+=tmp+":\n";
+	RESULT.cod+=c.cod+c.lv+":\n"+f.cod;
+        RESULT.cod+=e.cod+d+"= "+e.valor+";\n";
+        RESULT.cod+="goto "+tmp+";\n"+c.lf+":\n";
+:};
+
+CASES ::= CASE:a CASES:b
+{:
+	RESULT=new tresd();
+	RESULT.cod=a.cod + b.cod + a.lf + ":\n";
+:}
+	| CASE:a
+{:
+	RESULT=a;
+        RESULT.cod+=a.lf + ":\n";
+:}
+        | CASE:a DEFAULT:b
+{:
+	RESULT=new tresd();
+	RESULT.cod=a.cod + b.cod + a.lf + ":\n";
+:};
+
+CASE ::= caso E:a dpuntos S:b salir pcoma
+{:
+	RESULT=new tresd();
+	RESULT.lv=etiqueta();
+        String tmp_lf = etiqueta();
+        RESULT.lf=etiqueta();
+	RESULT.cod=a.cod + "if(" + heredado + " == " + a.valor + ") goto " + RESULT.lv + ";\n";
+	RESULT.cod+="goto " + tmp_lf + ";\n";
+	RESULT.cod+=RESULT.lv + ":\n" + b.cod + "goto " + RESULT.lf + ";\n" + tmp_lf + ":\n";
+:};
+
+DEFAULT ::= defecto dpuntos S:b
+{:
+	RESULT=new tresd();
+	RESULT.cod= b.cod;
+:};
+
+E::=	E:a mas E:b{:
+	RESULT=a;
+	String tm=temporal();
+	RESULT.cod+=b.cod+tm+"= "+a.valor+" + "+b.valor+";\n"; 
+        RESULT.valor=tm;
+:}
+	|E:a por E:b{:
+	RESULT=a;
+	String tm=temporal();
+	RESULT.cod+=b.cod+tm+"= "+a.valor+" * "+b.valor+";\n"; 
+        RESULT.valor=tm;
+:}
+	|E:a menos E:b{:
+	RESULT=a;
+	String tm=temporal();
+	RESULT.cod+=b.cod+tm+"= "+a.valor+" - "+b.valor+";\n"; 
+        RESULT.valor=tm;
+:}
+	|E:a div E:b{:
+	RESULT=a;
+	String tm=temporal();
+	RESULT.cod+=b.cod+tm+"= "+a.valor+" / "+b.valor+";\n"; 
+        RESULT.valor=tm;
+:}
+	|E:a menor E:b{:
+	RESULT=a;
+	RESULT.lv=etiqueta();
+	RESULT.lf=etiqueta();
+	RESULT.cod+=b.cod+"if("+a.valor+" < "+b.valor+") goto "+RESULT.lv+";\n";
+	RESULT.cod+="goto "+RESULT.lf+";\n";
+:}
+	|E:a mayor E:b{:
+	RESULT=a;
+	RESULT.lv=etiqueta();
+	RESULT.lf=etiqueta();
+	RESULT.cod+=b.cod+"if("+a.valor+" > "+b.valor+") goto "+RESULT.lv+";\n";
+	RESULT.cod+="goto "+RESULT.lf+";\n";
+:}
+	|E:a opo E:b{:
+	RESULT=new tresd();
+	RESULT.lv=a.lv+":\n"+b.lv;
+	RESULT.lf=b.lf;
+	RESULT.cod=a.cod+a.lf+":\n"+b.cod;
+	
+:}
+        |E:a igualIgual E:b{:
+	RESULT=a;
+	RESULT.lv=etiqueta();
+	RESULT.lf=etiqueta();
+	RESULT.cod+=b.cod+"if("+a.valor+" == "+b.valor+") goto "+RESULT.lv+";\n";
+	RESULT.cod+="goto "+RESULT.lf+";\n";
+	
+:}
+        |E:a diferente E:b{:
+	RESULT=a;
+	RESULT.lv=etiqueta();
+	RESULT.lf=etiqueta();
+	RESULT.cod+=b.cod+"if("+a.valor+" != "+b.valor+") goto "+RESULT.lv+";\n";
+	RESULT.cod+="goto "+RESULT.lf+";\n";
+	
+:}
+	|E:a opy E:b{:
+	RESULT=new tresd();
+	RESULT.lv=b.lv; 
+	RESULT.lf=a.lf+":\n"+b.lf;
+	RESULT.cod=a.cod+a.lv+":\n"+b.cod;
+	
+:}
+        
+	|opn E:a{:
+	RESULT=a;
+	String tmp=RESULT.lv;
+	RESULT.lv=RESULT.lf;
+	RESULT.lf=tmp;
+:}
+	|iden:a{:
+ 	RESULT=new tresd();	
+	RESULT.valor=a;
+	
+:}
+	|verdadero{:
+ 	RESULT=new tresd();
+        RESULT.valor="1";
+:}
+	|falso{:
+ 	RESULT=new tresd();
+        RESULT.valor="0";
+
+:}
+	|numero:a{:
+ 	RESULT=new tresd();	
+	RESULT.valor=a;
+        
+:}
+	|aparen E:a cparen{:
+	RESULT=a;
+:};
