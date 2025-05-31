@@ -1,4 +1,4 @@
-package neoscript.p2;
+package compiladores_final;
 import java_cup.runtime.Symbol;
 import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.ComplexSymbolFactory.Location;
@@ -19,7 +19,7 @@ entero  =   {digito}+
 double =   {digito}+ "." {digito}+
 letra   =   [a-zA-Z]
 id      =   ({letra} | "_") ({letra} | "_" | {digito})*
-tipo    =   ([iI][nN][tT] | [sS][tT][rR][iI][nN][gG] | [cH][hH][aA][rR] | [bB][oO][oO][lL][eE][aA][nN] | [dD][oO][uU][bB][lL][eE])
+tipo    =   ([iI][nN][tT] | [sS][tT][rR][iI][nN][gG] | [cH][hH][aA][rR] | [bB][oO][oO][lL][eE][aA][nN] | [dD][oO][uU][bB][lL][eE] | [fF][lL][oO][aA][tT] )
 espacio =   (" " | \r | \n | \t | \f)+
 boolean =   ("true" | "false")
 
@@ -67,6 +67,10 @@ boolean =   ("true" | "false")
 
     ")"     {   return symbol("PARENTESIS_CERRADO",Simbolo.PARENTESIS_CERRADO);    }
 
+    "{"     {   return symbol("LLAVE_ABIERTO",Simbolo.LLAVE_ABIERTO);    }
+
+    "}"     {   return symbol("LLAVE_CERRADO",Simbolo.LLAVE_CERRADO);    }
+
     ","     {   return symbol("COMA",Simbolo.COMA);                  }
 
     ":"     {   return symbol("DOS_PUNTOS",Simbolo.DOS_PUNTOS);                  }
@@ -77,51 +81,21 @@ boolean =   ("true" | "false")
 
     "?"     {   return symbol("TERNARIO",Simbolo.TERNARIO);                  }
     
-    [sS][iI]    {   return symbol("SI",Simbolo.SI);                    }
+    [iI][fF]    {   return symbol("IF",Simbolo.IF);                    }
 
-    [eE][nN][tT][oO][nN][cC][eE][sS]  {   return symbol("ENTONCES",Simbolo.ENTONCES);                    }
+    [eE][lL][sS][eE]  {   return symbol("ELSE",Simbolo.ELSE);                  }
 
-    [nN][oO]  {   return symbol("NO",Simbolo.NO);                  }
+    [wW][hH][iI][lL][eE] {   return symbol("WHILE",Simbolo.WHILE);                 }
 
-    [fF][iI][nN][sS][iI]  {   return symbol("FINSI",Simbolo.FINSI);                   }
+    [fF][oO][rR] {   return symbol("FOR",Simbolo.FOR);                 }
 
-    [mM][iI][eE][nN][tT][rR][aA][sS] {   return symbol("MIENTRAS",Simbolo.MIENTRAS);                 }
+    [cC][lL][aA][sS][eE] { return symbol("CLASE",Simbolo.CLASE);    }
 
-    [fF][iI][nN][mM][iI][eE][nN][tT][rR][aA][sS] {   return symbol("FINMIENTRAS",Simbolo.FINMIENTRAS);                 }
+    "||"    {   return symbol("OR",Simbolo.OR);                    }
 
-    [pP][aA][rR][aA] {   return symbol("PARA",Simbolo.PARA);                 }
+    "&&"   {   return symbol("AND",Simbolo.AND);                   }
 
-    [hH][aA][sS][tT][aA] {   return symbol("HASTA",Simbolo.HASTA);                 }
-
-    [pP][aA][sS][oO] {   return symbol("PASO",Simbolo.PASO);                 }
-
-    [sS][iI][gG][uU][iI][eE][nN][tT][eE] {   return symbol("SIGUIENTE",Simbolo.SIGUIENTE);                 }
-
-    [hH][aA][cC][eE][rR] {   return symbol("HACER",Simbolo.HACER);                 }
-
-    [rR][eE][pP][eE][tT][iI][rR][mM][iI][eE][nN][tT][rR][aA][sS] {   return symbol("REPETIRMIENTRAS",Simbolo.REPETIRMIENTRAS);                 }
-
-    [sS][eE][lL][eE][cC][cC][iI][oO][nN][aA][rR] {   return symbol("SELECCIONAR",Simbolo.SELECCIONAR);                 }
-
-    [cC][aA][sS][oO] {   return symbol("CASO",Simbolo.CASO);                 }
-
-    [cC][oO][nN][tT][rR][aA][rR][iI][oO] {   return symbol("CONTRARIO",Simbolo.CONTRARIO);                 }
-
-    [fF][iI][nN][cC][aA][sS][oO] {   return symbol("FINCASO",Simbolo.FINCASO);                 }
-
-    [fF][iI][nN][sS][eE][lL][eE][cC][cC][iI][oO][nN][aA][rR] {   return symbol("FINSELECCIONAR",Simbolo.FINSELECCIONAR);                 }
-
-    [dD][iI][mM] {   return symbol("DIM",Simbolo.DIM);                 }
-
-    [cC][oO][mM][oO] {   return symbol("COMO",Simbolo.COMO);                 }
-
-    [iI][mM][pP][rR][iI][mM][iI][rR]  {   return symbol("IMPRIMIR",Simbolo.IMPRIMIR);                  }
-
-    "or"    {   return symbol("OR",Simbolo.OR);                    }
-
-    "and"   {   return symbol("AND",Simbolo.AND);                   }
-
-    "not"   {   return symbol("NOT",Simbolo.NOT);                  }
+    "!"   {   return symbol("NOT",Simbolo.NOT);                  }
 
     "=="    {   return symbol("IGUAL_IGUAL",Simbolo.IGUAL_IGUAL);           }
 

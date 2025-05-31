@@ -1,4 +1,4 @@
-package neoscript.p2;
+package compiladores_final;
 import java_cup.runtime.Symbol;
 import java.util.Stack;
 import neoscript.p2.Interfaz;
@@ -99,13 +99,8 @@ action code
     }
 :}
 
-terminal PARENTESIS_ABIERTO, PARENTESIS_CERRADO, COMA, 
-    DIM, COMO,
-    SI, ENTONCES, NO, FINSI,
-    MIENTRAS, FINMIENTRAS,
-    HACER, REPETIRMIENTRAS,
-    PARA, HASTA, PASO, SIGUIENTE,
-    SELECCIONAR, CASO, CONTRARIO, FINCASO, FINSELECCIONAR,
+terminal PARENTESIS_ABIERTO, PARENTESIS_CERRADO, LLAVE_ABIERTO, LLAVE_CERRADO, COMA,
+    CLASE, IF, ELSE, WHILE, FOR,
     DOS_PUNTOS, PUNTO_COMA, AMPERSAND, TERNARIO,
     IMPRIMIR, OR, AND, NOT, IGUAL_IGUAL, MENOR, MAYOR, IGUAL, MAS, 
     ASTERISCO, MENOS, SLASH, POTENCIA, MODULO;
@@ -114,7 +109,7 @@ terminal String ENTERO, DOUBLE, CADENA, TIPO, ID, CARACTER, BOOLEANO;
 
 non terminal inicio;
 
-non terminal Nodo instrucciones, instruccion, asignacion, declaracion, if, if_else_part, while, for, 
+non terminal Nodo instrucciones, instruccion, clase, asignacion, declaracion, if, if_else_part, while, for, 
     dowhile, switch, cases, case, default, puts, expresion, expresiones, ids;
 
 precedence left OR;
@@ -136,15 +131,16 @@ inicio ::= instrucciones:insts
 {:
 parser.instrucciones = insts;
 :};
-    
 
-instrucciones ::= instrucciones:insts instruccion:inst PUNTO_COMA
+
+
+instrucciones ::= instrucciones:insts instruccion:inst
 {:
 Nodo nodo = insts;
 nodo.hijos.add(inst);
 RESULT = nodo;
 :}
-    | instruccion:inst PUNTO_COMA
+    | instruccion:inst
 {:
 Nodo nodo = new Nodo("Instruccion");
 nodo.hijos.add(inst);
@@ -156,7 +152,7 @@ instruccion ::= asignacion:inst
 {:
 RESULT = inst;
 :}
-    | declaracion:inst
+    | declaracion:inst 
 {:
 RESULT = inst;
 :}
@@ -172,15 +168,7 @@ RESULT = inst;
 {:
 RESULT = inst;
 :}
-    | dowhile:inst
-{:
-RESULT = inst;
-:}
-    | switch:inst
-{:
-RESULT = inst;
-:}
-    | puts:inst
+    | clase:inst
 {:
 RESULT = inst;
 :}
@@ -190,7 +178,12 @@ RESULT = n;
 :}
     ;
 
-declaracion ::= DIM ids:ids COMO TIPO:tipo IGUAL expresion:expr
+clase ::= ID:id DOS_PUNTOS CLASE LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO
+{:
+
+:};
+
+declaracion ::= ids:ids DOS_PUNTOS TIPO:tipo IGUAL expresion:expr
 {:
 Nodo nodoId = new Nodo("variables");
 nodoId.hijos.add(ids);
@@ -244,7 +237,7 @@ RESULT = inst;
 :}
     ;
 
-if ::= SI 
+if ::= IF 
     {: 
         contadorSentencia++;
         if(ambito.isEmpty()){
@@ -253,7 +246,7 @@ if ::= SI
             ambito.add(ambito.peek()+".si"+contadorSentencia);
         }
     :} 
-    expresion:expr ENTONCES instrucciones:insts if_else_part:elsepart FINSI
+    expresion:expr LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO if_else_part:elsepart
 {:
     Nodo nodo = new Nodo("if");
     nodo.hijos.add(expr);
@@ -266,7 +259,7 @@ if ::= SI
 :}
     ;
 
-if_else_part ::= NO instrucciones:insts2
+if_else_part ::= ELSE LLAVE_ABIERTO instrucciones:insts2 LLAVE_CERRADO
 {:
     RESULT = insts2;
 :}
@@ -276,14 +269,14 @@ if_else_part ::= NO instrucciones:insts2
 :}
     ;
 
-while ::= MIENTRAS {: 
+while ::= WHILE {: 
         contadorSentencia++;
         if(ambito.isEmpty()){
             ambito.add("mientras"+contadorSentencia);
         } else {
             ambito.add(ambito.peek()+".mientras"+contadorSentencia);
         }
-    :}  expresion:expr instrucciones:insts FINMIENTRAS
+    :} PARENTESIS_ABIERTO  expresion:expr PARENTESIS_CERRADO LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO
 {:
 Nodo nodo = new Nodo("while");
 nodo.hijos.add(expr);
@@ -293,143 +286,20 @@ ambito.pop();
 :}
     ;
 
-for ::= PARA {: 
+for ::= FOR {: 
         contadorSentencia++;
         if(ambito.isEmpty()){
             ambito.add("para"+contadorSentencia);
         } else {
             ambito.add(ambito.peek()+".para"+contadorSentencia);
         }
-    :} asignacion:inicia HASTA ENTERO:compara PASO ENTERO:salto instrucciones:insts SIGUIENTE ID:id
+    :} PARENTESIS_ABIERTO asignacion:inicia PUNTO_COMA ENTERO:compara PUNTO_COMA ENTERO:salto LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO
 {:
-Nodo nodo = new Nodo("for");
-// Nodo de asignacion inicial
-Nodo asignFor = new Nodo("Instruccion");
-asignFor.hijos.add(inicia);
-nodo.hijos.add(asignFor);
 
-// nodo de comparacion
-Nodo nodoVariable = new Nodo("variable");
-nodoVariable.hijos.add(new Nodo(id));
-
-Nodo nodoValorCompara = new Nodo("valor");
-Nodo tipoValorCompara = new Nodo("int");
-nodoValorCompara.hijos.add(tipoValorCompara);
-tipoValorCompara.hijos.add(new Nodo(compara));
-
-Nodo nodoMenorIgual = new Nodo("<=");
-nodoMenorIgual.hijos.add(nodoVariable);
-nodoMenorIgual.hijos.add(nodoValorCompara);
-
-nodo.hijos.add(nodoMenorIgual);
-
-// nodo de salto
-Nodo nodoValorSalto = new Nodo("valor");
-Nodo tipoValorSalto = new Nodo("int");
-nodoValorSalto.hijos.add(tipoValorSalto);
-tipoValorSalto.hijos.add(new Nodo(salto));
-
-Nodo nodoMas = new Nodo("+");
-nodoMas.hijos.add(nodoVariable);
-nodoMas.hijos.add(nodoValorSalto);
-
-Nodo inst = new Nodo("asignacion");
-inst.hijos.add(nodoVariable);
-inst.hijos.add(nodoMas);
-
-asignFor = new Nodo("Instruccion");
-asignFor.hijos.add(inst);
-nodo.hijos.add(asignFor);
-
-// nodo de instrucciones
-nodo.hijos.add(insts);
-RESULT = nodo;
-ambito.pop();
 :}
     ;
 
-dowhile ::= HACER {: 
-        contadorSentencia++;
-        if(ambito.isEmpty()){
-            ambito.add("hacer"+contadorSentencia);
-        } else {
-            ambito.add(ambito.peek()+".hacer"+contadorSentencia);
-        }
-    :} instrucciones:insts REPETIRMIENTRAS expresion:expr
-{:
-Nodo nodo = new Nodo("dowhile");
-nodo.hijos.add(expr);
-nodo.hijos.add(insts);
-RESULT = nodo;
-ambito.pop();
-:}
-    ;
 
-switch ::= SELECCIONAR {: 
-        contadorSentencia++;
-        if(ambito.isEmpty()){
-            ambito.add("seleccionar"+contadorSentencia);
-        } else {
-            ambito.add(ambito.peek()+".seleccionar"+contadorSentencia);
-        }
-    :} CASO expresion:expr cases:cases FINSELECCIONAR
-{:
-Nodo result = transforma_Switch_If(expr, cases);
-RESULT = result;
-ambito.pop();
-:}
-    ;
-
-cases ::= case:_case cases:cases 
-{: 
-Nodo nodo = new Nodo("cases");
-nodo.hijos.add(cases);
-nodo.hijos.add(_case);
-RESULT = nodo;
-:}
-    | case:_case
-{: 
-Nodo nodo = new Nodo("case1");
-nodo.hijos.add(_case);
-RESULT = nodo;
-:}
-    | case:_case default:_def
-{: 
-Nodo nodo = new Nodo("default");
-nodo.hijos.add(_case);
-nodo.hijos.add(_def);
-RESULT = nodo;
-:}
-;
-
-case ::= CASO expresion:expr DOS_PUNTOS instrucciones:insts FINCASO PUNTO_COMA
-{:
-Nodo nodo = new Nodo("case_data");
-nodo.hijos.add(expr);
-nodo.hijos.add(insts);
-RESULT = nodo;
-:}
-;
-
-default ::= CASO CONTRARIO DOS_PUNTOS instrucciones:insts FINCASO PUNTO_COMA
-{:
-Nodo nodo = new Nodo("default");
-nodo.hijos.add(insts);
-RESULT = nodo;
-:}
-;
-
-
-
-puts ::= IMPRIMIR expresiones:expr
-{:
-Nodo nodo =  new Nodo("puts");
-Nodo nodoConcat = new Nodo("concatenar");
-nodoConcat.hijos.add(expr);
-nodo.hijos.add(nodoConcat);
-RESULT = nodo;
-:}
-    ;
 
 expresion ::= expresion:expr MAS expresion:expr2
 {:

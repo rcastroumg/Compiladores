@@ -1,4 +1,4 @@
-package neoscript.p2;
+package compiladores_final;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
