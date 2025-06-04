@@ -2,7 +2,7 @@ package compiladores_final;
 import java_cup.runtime.Symbol;
 import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.ComplexSymbolFactory.Location;
-import neoscript.p2.Interfaz;
+import compiladores_final.Interfaz;
 
 %%
 
@@ -90,6 +90,10 @@ boolean =   ("true" | "false")
     [fF][oO][rR] {   return symbol("FOR",Simbolo.FOR);                 }
 
     [cC][lL][aA][sS][eE] { return symbol("CLASE",Simbolo.CLASE);    }
+
+    [vV][oO][iI][dD] { return symbol("VOID",Simbolo.VOID);    }
+
+    [rR][eE][tT][uU][rR][nN] { return symbol("RETURN",Simbolo.RETURN);    }
 
     "||"    {   return symbol("OR",Simbolo.OR);                    }
 

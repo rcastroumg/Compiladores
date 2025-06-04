@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java_cup.runtime.ComplexSymbolFactory;
@@ -23,7 +24,7 @@ import javax.swing.table.DefaultTableModel;
 public class Interfaz extends javax.swing.JFrame {
 
     private ListaVariables variables;
-    private Nodo instrucciones;
+    private TablaSimbolos instrucciones;
     private String salida;
     
     NumeroLinea numeroLinea;
@@ -103,13 +104,13 @@ public class Interfaz extends javax.swing.JFrame {
 
         jtSimbolos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"
             }
         ));
         jScrollPane1.setViewportView(jtSimbolos);
@@ -131,16 +132,20 @@ public class Interfaz extends javax.swing.JFrame {
                         .addComponent(jButton1))
                     .addComponent(jScrollPane4)
                     .addComponent(jScrollPane3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(146, 146, 146)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jLabel2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(144, 144, 144)
+                        .addComponent(jLabel3))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -182,9 +187,9 @@ public class Interfaz extends javax.swing.JFrame {
             variables = new ListaVariables();
             salida = "";
             instrucciones = parser.instrucciones;
-            ejecutar(instrucciones);
+            //ejecutar(instrucciones);
             jtaResult.setText(salida);
-            llenarTabla(variables);
+            llenarTabla(instrucciones);
             notificar_err("---------------Analisis finalizado---------------");
         } catch (Exception exception) {
             System.out.println("ERR: "+exception.getMessage());
@@ -664,6 +669,15 @@ public class Interfaz extends javax.swing.JFrame {
             Variable var = objeto.getValue();
             dtm.addRow(new Object[]{
                 var.nombre,var.tipo,var.ambito,var.valor
+            });
+        }
+    }
+    
+    public void llenarTabla(TablaSimbolos variables){
+        List<Variable> lvar = variables.getSimbolos();
+        for(Variable var : lvar) {
+            dtm.addRow(new Object[]{
+                var.nombre,var.tipo,var.ambito,var.tamanio,var.posicion
             });
         }
     }

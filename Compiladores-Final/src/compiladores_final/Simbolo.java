@@ -8,12 +8,12 @@ package compiladores_final;
 /** CUP generated class containing symbol constants. */
 public class Simbolo {
   /* terminals */
-  public static final int TIPO = 33;
+  public static final int TIPO = 35;
   public static final int SLASH = 27;
   public static final int LLAVE_ABIERTO = 4;
   public static final int IMPRIMIR = 16;
-  public static final int ENTERO = 30;
-  public static final int DOUBLE = 31;
+  public static final int ENTERO = 32;
+  public static final int DOUBLE = 33;
   public static final int DOS_PUNTOS = 12;
   public static final int ASTERISCO = 25;
   public static final int TERNARIO = 15;
@@ -22,27 +22,29 @@ public class Simbolo {
   public static final int NOT = 19;
   public static final int AND = 18;
   public static final int IGUAL = 23;
-  public static final int CARACTER = 35;
+  public static final int CARACTER = 37;
   public static final int OR = 17;
   public static final int IF = 8;
   public static final int AMPERSAND = 14;
+  public static final int ID = 36;
   public static final int PUNTO_COMA = 13;
   public static final int IGUAL_IGUAL = 20;
-  public static final int ID = 34;
   public static final int EOF = 0;
+  public static final int RETURN = 31;
   public static final int CLASE = 7;
   public static final int error = 1;
   public static final int COMA = 6;
-  public static final int CADENA = 32;
+  public static final int CADENA = 34;
   public static final int MODULO = 29;
   public static final int MENOS = 26;
   public static final int MENOR = 21;
+  public static final int VOID = 30;
   public static final int MAYOR = 22;
   public static final int POTENCIA = 28;
   public static final int ELSE = 9;
   public static final int LLAVE_CERRADO = 5;
   public static final int WHILE = 10;
-  public static final int BOOLEANO = 36;
+  public static final int BOOLEANO = 38;
   public static final int PARENTESIS_CERRADO = 3;
   public static final int MAS = 24;
   public static final String[] terminalNames = new String[] {
@@ -76,6 +78,8 @@ public class Simbolo {
   "SLASH",
   "POTENCIA",
   "MODULO",
+  "VOID",
+  "RETURN",
   "ENTERO",
   "DOUBLE",
   "CADENA",

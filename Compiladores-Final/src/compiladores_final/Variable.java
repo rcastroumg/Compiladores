@@ -13,5 +13,17 @@ public class Variable {
     public Object valor;
     public String tipo;
     public String ambito;
+    public Integer tamanio;
+    public Integer posicion;
+    
+    public Variable(String nombre, String tipo, String ambito, int tamano, int posicion) {
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.ambito = ambito;
+        this.tamanio = tamano;
+        this.posicion = posicion;
+    }
+    
+    public Variable(){}
 }
 

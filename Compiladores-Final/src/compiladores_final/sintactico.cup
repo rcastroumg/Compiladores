@@ -1,11 +1,13 @@
 package compiladores_final;
 import java_cup.runtime.Symbol;
 import java.util.Stack;
-import neoscript.p2.Interfaz;
+import compiladores_final.Interfaz;
+import java.util.List;
+import java.util.ArrayList;
 
 parser code
 {:
-    public Nodo instrucciones;
+    public TablaSimbolos instrucciones;
     
     public void syntax_error(Symbol s){
         System.out.println("Error sintactico en simbolo: "+s.value+", "+s.left+", "+s.right);
@@ -24,93 +26,22 @@ action code
     Stack <String> ambito = new Stack <String>();
     int contadorSentencia = 0;
 
-    private Nodo transforma_Switch_If(Nodo switchExpr, Nodo casesNode) {
-        // Verifica si el nodo "Cases" con multiples nodos
-        if (casesNode.valor.equals("cases")) {
-            // obtiene los nodos hijos
-            Nodo prevCases = casesNode.hijos.get(0);
-            Nodo currentCase = casesNode.hijos.get(1);
-            
-            // Obtiene las expresiones y las instrucciones
-            Nodo caseExpr = currentCase.hijos.get(0);
-            Nodo caseInsts = currentCase.hijos.get(1);
-            
-            // Crea el nodo de comparacion del if
-            Nodo comparison = new Nodo("==");
-            comparison.hijos.add(switchExpr);
-            comparison.hijos.add(caseExpr);
-            
-            // Crea el nodo If del case actual
-            Nodo ifNode = new Nodo("if");
-            ifNode.hijos.add(comparison);
-            ifNode.hijos.add(caseInsts);
-            
-            // Agrega el nodo Else, segun los siguientes Case de forma recursiva
-            Nodo elseNode = transforma_Switch_If(switchExpr, prevCases);
-            Nodo insts = new Nodo("instrucciones");
-            insts.hijos.add(elseNode);
-            ifNode.hijos.add(insts);
-            
-            return ifNode;
-        } 
-        // Valida si es un solo case
-        else if (casesNode.valor.equals("case1")) {
-            Nodo caseNode = casesNode.hijos.get(0);
-            Nodo caseExpr = caseNode.hijos.get(0);
-            Nodo caseInsts = caseNode.hijos.get(1);
-            
-            // Crea el nodo de comparacion del if
-            Nodo comparison = new Nodo("==");
-            comparison.hijos.add(switchExpr);
-            comparison.hijos.add(caseExpr);
-            
-            // Crea el nodo If del case actual
-            Nodo ifNode = new Nodo("if");
-            ifNode.hijos.add(comparison);
-            ifNode.hijos.add(caseInsts);
-            
-            return ifNode;
-        }
-        // Valida si tiene nodo default
-        else if (casesNode.valor.equals("default")) {
-            Nodo caseNode = casesNode.hijos.get(0);
-            Nodo caseExpr = caseNode.hijos.get(0);
-            Nodo caseInsts = caseNode.hijos.get(1);
-            
-            // Crea el nodo de comparacion del if
-            Nodo comparison = new Nodo("==");
-            comparison.hijos.add(switchExpr);
-            comparison.hijos.add(caseExpr);
-
-            // Crea el nodo default 
-            Nodo defaultNode = casesNode.hijos.get(1);
-            Nodo defaultInsts = defaultNode.hijos.get(0);
-            
-            // Crea el nodo If del case y le agrega como else el nodo default
-            Nodo ifNode = new Nodo("if");
-            ifNode.hijos.add(comparison);
-            ifNode.hijos.add(caseInsts);
-            ifNode.hijos.add(defaultInsts);
-                        
-            return ifNode;
-        }
-        
-        return new Nodo("error al transformar switch");
-    }
+    TablaSimbolos tablaSimbolos = new TablaSimbolos();
 :}
 
 terminal PARENTESIS_ABIERTO, PARENTESIS_CERRADO, LLAVE_ABIERTO, LLAVE_CERRADO, COMA,
     CLASE, IF, ELSE, WHILE, FOR,
     DOS_PUNTOS, PUNTO_COMA, AMPERSAND, TERNARIO,
     IMPRIMIR, OR, AND, NOT, IGUAL_IGUAL, MENOR, MAYOR, IGUAL, MAS, 
-    ASTERISCO, MENOS, SLASH, POTENCIA, MODULO;
+    ASTERISCO, MENOS, SLASH, POTENCIA, MODULO, VOID, RETURN;
 
 terminal String ENTERO, DOUBLE, CADENA, TIPO, ID, CARACTER, BOOLEANO;
 
 non terminal inicio;
 
-non terminal Nodo instrucciones, instruccion, clase, asignacion, declaracion, if, if_else_part, while, for, 
-    dowhile, switch, cases, case, default, puts, expresion, expresiones, ids;
+non terminal instrucciones, instruccion, clase, clases, asignacion, declaracion, if, if_else_part, while, for, 
+    dowhile, switch, cases, case, default, puts, expresion, expresiones, ids, variable,
+    declaraciones, tipodeclaracion, metodo, tipometodo, tipovar, declaraparam, idsparam, retorno;
 
 precedence left OR;
 precedence left AND;
@@ -127,325 +58,183 @@ precedence right IGUAL;
 
 start with inicio;
 
-inicio ::= instrucciones:insts
+inicio ::= clases:clases
 {:
-parser.instrucciones = insts;
+parser.instrucciones = tablaSimbolos;
 :};
 
+clases ::= clases:clases clase:clase
+    | clase:clase
+;
 
+clase ::= ID:id DOS_PUNTOS CLASE
+    {: 
+        tablaSimbolos.agregarSimbolo(id, "clase", 0);
+        tablaSimbolos.entrarAmbito(id); 
+    :}
+    LLAVE_ABIERTO declaraciones LLAVE_CERRADO
+    {:
+        tablaSimbolos.salirAmbito();
+    :};
+
+
+declaraciones ::= declaraciones tipodeclaracion
+    | tipodeclaracion
+;
+
+tipodeclaracion ::= declaracion:inst PUNTO_COMA
+    | metodo
+;
+
+metodo ::= ID:id 
+    {:
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + "." + id);
+    :}
+    PARENTESIS_ABIERTO declaraparam PARENTESIS_CERRADO DOS_PUNTOS tipometodo:tipomethod 
+    {:
+        tablaSimbolos.salirAmbito();
+        tablaSimbolos.agregarSimbolo(id, (String)tipomethod+"()", 0);
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + "." + id);
+    :}
+    LLAVE_ABIERTO instrucciones:insts retorno LLAVE_CERRADO
+    {:
+        tablaSimbolos.salirAmbito();
+    :}
+;
+
+retorno ::= RETURN ID PUNTO_COMA
+    | /* vacío */
+;
+
+tipometodo ::= TIPO:tipo {: RESULT=tipo; :}
+    | VOID:vacio {: RESULT="void"; :}
+;
 
 instrucciones ::= instrucciones:insts instruccion:inst
-{:
-Nodo nodo = insts;
-nodo.hijos.add(inst);
-RESULT = nodo;
-:}
     | instruccion:inst
-{:
-Nodo nodo = new Nodo("Instruccion");
-nodo.hijos.add(inst);
-RESULT = nodo;
-:}
     ;
 
-instruccion ::= asignacion:inst
-{:
-RESULT = inst;
-:}
-    | declaracion:inst 
-{:
-RESULT = inst;
-:}
+instruccion ::= asignacion:inst PUNTO_COMA
+    | declaracion:inst PUNTO_COMA
     | if:inst
-{:
-RESULT = inst;
-:}
     | while:inst
-{:
-RESULT = inst;
-:}
     | for:inst
+    | error PUNTO_COMA 
+    ;
+
+
+declaracion ::= ids:ids DOS_PUNTOS tipovar:tipo IGUAL expresion:expr
 {:
-RESULT = inst;
+    for (String var : (List<String>)ids) {
+        tablaSimbolos.agregarSimbolo(var, (String)tipo, 1);
+    }
 :}
-    | clase:inst
+    | ids:ids DOS_PUNTOS tipovar:tipo
 {:
-RESULT = inst;
-:}
-    | error PUNTO_COMA {:
-Nodo n = new Nodo("Error");
-RESULT = n;
+    for (String var : (List<String>)ids) {
+        tablaSimbolos.agregarSimbolo(var, (String)tipo, 1);
+    }
 :}
     ;
 
-clase ::= ID:id DOS_PUNTOS CLASE LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO
-{:
-
-:};
-
-declaracion ::= ids:ids DOS_PUNTOS TIPO:tipo IGUAL expresion:expr
-{:
-Nodo nodoId = new Nodo("variables");
-nodoId.hijos.add(ids);
-nodoId.hijos.add(new Nodo(tipo));
-if(ambito.isEmpty()) {
-nodoId.hijos.add(new Nodo(""));
-} else {
-nodoId.hijos.add(new Nodo(ambito.peek()));
-}
-Nodo inst = new Nodo("declaracion");
-inst.hijos.add(nodoId);
-inst.hijos.add(expr);
-RESULT = inst;
-:}
-    ;
+tipovar ::= TIPO:tipo {: RESULT=tipo; :}
+    | ID:tipo {: RESULT=tipo; :}
+;
 
 ids ::= ids:ids COMA ID:id
 {:
-Nodo nodo = ids;
-nodo.hijos.add(new Nodo(id));
-RESULT = nodo;
+    ((List<String>)ids).add((String)id);
+    RESULT = ids;
 :}
     | ID:id
 {:
-Nodo nodo = new Nodo("ids");
-nodo.hijos.add(new Nodo(id));
-RESULT = nodo;
+    List<String> lista = new ArrayList<>();
+    lista.add((String)id);
+    RESULT = lista;
+:} ;
+
+declaraparam ::= idsparam:ids
+    |
+    ;
+
+idsparam ::= idsparam:ids COMA ID:id DOS_PUNTOS TIPO:tipo
+{:
+    tablaSimbolos.agregarSimbolo(id, tipo, 1);
+:}
+    | ID:id DOS_PUNTOS TIPO:tipo
+{:
+    tablaSimbolos.agregarSimbolo(id, tipo, 1);
 :} ;
 
 asignacion ::= ID:id IGUAL expresion:expr
-{:
-Nodo nodoId = new Nodo("variable");
-nodoId.hijos.add(new Nodo(id));
-Nodo inst = new Nodo("asignacion");
-inst.hijos.add(nodoId);
-inst.hijos.add(expr);
-RESULT = inst;
-:}
     | ID:id IGUAL expresion:expr TERNARIO expresion:expr2 DOS_PUNTOS expresion:expr3
-{:
-Nodo nodoId = new Nodo("variable");
-nodoId.hijos.add(new Nodo(id));
-Nodo ternario = new Nodo("ternario");
-ternario.hijos.add(expr);
-ternario.hijos.add(expr2);
-ternario.hijos.add(expr3);
-Nodo inst = new Nodo("asignacion");
-inst.hijos.add(nodoId);
-inst.hijos.add(ternario);
-RESULT = inst;
-:}
     ;
 
 if ::= IF 
-    {: 
+    {:
         contadorSentencia++;
-        if(ambito.isEmpty()){
-            ambito.add("si"+contadorSentencia);
-        } else {
-            ambito.add(ambito.peek()+".si"+contadorSentencia);
-        }
-    :} 
-    expresion:expr LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO if_else_part:elsepart
-{:
-    Nodo nodo = new Nodo("if");
-    nodo.hijos.add(expr);
-    nodo.hijos.add(insts);
-    if (elsepart != null) {
-        nodo.hijos.add(elsepart);
-    }
-    RESULT = nodo;
-    ambito.pop();
-:}
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".if" + contadorSentencia);
+    :}
+    PARENTESIS_ABIERTO expresion:expr PARENTESIS_CERRADO LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO if_else_part:elsepart
+    {:
+        tablaSimbolos.salirAmbito();
+    :}
     ;
 
-if_else_part ::= ELSE LLAVE_ABIERTO instrucciones:insts2 LLAVE_CERRADO
-{:
-    RESULT = insts2;
-:}
+if_else_part ::= ELSE
+    {:
+        tablaSimbolos.salirAmbito();
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".else" + contadorSentencia);
+    :}
+    LLAVE_ABIERTO instrucciones:insts2 LLAVE_CERRADO
     | /* vacío */
-{:
-    RESULT = null;
-:}
     ;
 
-while ::= WHILE {: 
+while ::= WHILE 
+    {:
         contadorSentencia++;
-        if(ambito.isEmpty()){
-            ambito.add("mientras"+contadorSentencia);
-        } else {
-            ambito.add(ambito.peek()+".mientras"+contadorSentencia);
-        }
-    :} PARENTESIS_ABIERTO  expresion:expr PARENTESIS_CERRADO LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO
-{:
-Nodo nodo = new Nodo("while");
-nodo.hijos.add(expr);
-nodo.hijos.add(insts);
-RESULT = nodo;
-ambito.pop();
-:}
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".while" + contadorSentencia);
+    :}
+    PARENTESIS_ABIERTO  expresion:expr PARENTESIS_CERRADO LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO
+    {:
+        tablaSimbolos.salirAmbito();
+    :}
     ;
 
-for ::= FOR {: 
+for ::= FOR 
+    {:
         contadorSentencia++;
-        if(ambito.isEmpty()){
-            ambito.add("para"+contadorSentencia);
-        } else {
-            ambito.add(ambito.peek()+".para"+contadorSentencia);
-        }
-    :} PARENTESIS_ABIERTO asignacion:inicia PUNTO_COMA ENTERO:compara PUNTO_COMA ENTERO:salto LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO
-{:
-
-:}
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".for" + contadorSentencia);
+    :}
+    PARENTESIS_ABIERTO asignacion:inicia PUNTO_COMA expresion:compara PUNTO_COMA asignacion:salto LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO
+    {:
+        tablaSimbolos.salirAmbito();
+    :}
     ;
 
 
 
 expresion ::= expresion:expr MAS expresion:expr2
-{:
-Nodo nodo = new Nodo("+");
-nodo.hijos.add(expr);
-nodo.hijos.add(expr2);
-RESULT = nodo;
-:}
     | expresion:expr MENOS expresion:expr2
-{:
-Nodo nodo = new Nodo("-");
-nodo.hijos.add(expr);
-nodo.hijos.add(expr2);
-RESULT = nodo;
-:}
     | expresion:expr ASTERISCO expresion:expr2
-{:
-Nodo nodo = new Nodo("*");
-nodo.hijos.add(expr);
-nodo.hijos.add(expr2);
-RESULT = nodo;
-:}
     | expresion:expr SLASH expresion:expr2
-{:
-Nodo nodo = new Nodo("/");
-nodo.hijos.add(expr);
-nodo.hijos.add(expr2);
-RESULT = nodo;
-:}
     | expresion:expr POTENCIA expresion:expr2
-{:
-Nodo nodo = new Nodo("^");
-nodo.hijos.add(expr);
-nodo.hijos.add(expr2);
-RESULT = nodo;
-:}
     | expresion:expr MODULO expresion:expr2
-{:
-Nodo nodo = new Nodo("%");
-nodo.hijos.add(expr);
-nodo.hijos.add(expr2);
-RESULT = nodo;
-:}
     | expresion:expr MAYOR expresion:expr2
-{:
-Nodo nodo = new Nodo(">");
-nodo.hijos.add(expr);
-nodo.hijos.add(expr2);
-RESULT = nodo;
-:}
     | expresion:expr MENOR expresion:expr2
-{:
-Nodo nodo = new Nodo("<");
-nodo.hijos.add(expr);
-nodo.hijos.add(expr2);
-RESULT = nodo;
-:}
     | expresion:expr IGUAL_IGUAL expresion:expr2
-{:
-Nodo nodo = new Nodo("==");
-nodo.hijos.add(expr);
-nodo.hijos.add(expr2);
-RESULT = nodo;
-:}
     | NOT expresion:expr
-{:
-Nodo nodo = new Nodo("not");
-nodo.hijos.add(expr);
-RESULT = nodo;
-:}
     | expresion:expr OR expresion:expr2
-{:
-Nodo nodo = new Nodo("or");
-nodo.hijos.add(expr);
-nodo.hijos.add(expr2);
-RESULT = nodo;
-:}
     | expresion:expr AND expresion:expr2
-{:
-Nodo nodo = new Nodo("and");
-nodo.hijos.add(expr);
-nodo.hijos.add(expr2);
-RESULT = nodo;
-:}
     | PARENTESIS_ABIERTO expresion:expr PARENTESIS_CERRADO
-{:
-RESULT = expr;
-:}
     | ID:id
-{:
-Nodo nodo = new Nodo("variable");
-nodo.hijos.add(new Nodo(id));
-RESULT = nodo;
-:}
     | ENTERO:entero
-{:
-Nodo nodo = new Nodo("valor");
-Nodo tipo = new Nodo("int");
-nodo.hijos.add(tipo);
-tipo.hijos.add(new Nodo(entero));
-RESULT = nodo;
-:}
     | DOUBLE:double_
-{:
-Nodo nodo = new Nodo("valor");
-Nodo tipo = new Nodo("double");
-nodo.hijos.add(tipo);
-tipo.hijos.add(new Nodo(double_));
-RESULT = nodo;
-:}
     | CADENA:cadena
-{:
-Nodo nodo = new Nodo("valor");
-Nodo tipo = new Nodo("string");
-nodo.hijos.add(tipo);
-tipo.hijos.add(new Nodo(cadena));
-RESULT = nodo;
-:}
     | CARACTER:caracter
-{:
-Nodo nodo = new Nodo("valor");
-Nodo tipo = new Nodo("char");
-nodo.hijos.add(tipo);
-tipo.hijos.add(new Nodo(caracter));
-RESULT = nodo;
-:}
     | BOOLEANO:boolean_
-{:
-Nodo nodo = new Nodo("valor");
-Nodo tipo = new Nodo("boolean");
-nodo.hijos.add(tipo);
-tipo.hijos.add(new Nodo(boolean_));
-RESULT = nodo;
-:}
     ;
 
 expresiones ::= expresiones:exprs AMPERSAND expresion:expr
-{:
-Nodo nodo = exprs;
-nodo.hijos.add(expr);
-RESULT = nodo;
-:}
     | expresion:expr
-{:
-Nodo nodo = new Nodo("Expresion");
-nodo.hijos.add(expr);
-RESULT = nodo;
-:}
     ;
