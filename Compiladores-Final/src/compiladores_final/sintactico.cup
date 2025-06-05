@@ -206,7 +206,7 @@ for ::= FOR
         contadorSentencia++;
         tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".for" + contadorSentencia);
     :}
-    PARENTESIS_ABIERTO asignacion:inicia PUNTO_COMA expresion:compara PUNTO_COMA asignacion:salto LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO
+    PARENTESIS_ABIERTO asignacion:inicia PUNTO_COMA expresion:compara PUNTO_COMA asignacion:salto PARENTESIS_CERRADO LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO
     {:
         tablaSimbolos.salirAmbito();
     :}

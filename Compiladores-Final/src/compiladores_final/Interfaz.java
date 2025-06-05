@@ -37,7 +37,7 @@ public class Interfaz extends javax.swing.JFrame {
     public Interfaz() {
         initComponents();
         inicializador();
-        String[] titulo = new String[] {"Nombre","Tipo","Ámbito","Valor final"};
+        String[] titulo = new String[] {"Nombre","Tipo","Ámbito","Tamaño","Posición"};
         dtm.setColumnIdentifiers(titulo);
         jtSimbolos.setModel(dtm);
     }
