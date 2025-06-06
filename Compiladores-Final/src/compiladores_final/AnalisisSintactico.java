@@ -443,7 +443,7 @@ parser.instrucciones = tablaSimbolos;
 		String id = (String)((java_cup.runtime.Symbol) CUP$AnalisisSintactico$stack.elementAt(CUP$AnalisisSintactico$top-2)).value;
  
         tablaSimbolos.agregarSimbolo(id, "clase", 0);
-        tablaSimbolos.entrarAmbito(id); 
+        tablaSimbolos.entrarAmbito(id,false); 
     
               CUP$AnalisisSintactico$result = parser.getSymbolFactory().newSymbol("NT$0",29, ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.peek()), RESULT);
             }
@@ -459,7 +459,7 @@ parser.instrucciones = tablaSimbolos;
 		int idright = ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.elementAt(CUP$AnalisisSintactico$top-6)).right;
 		String id = (String)((java_cup.runtime.Symbol) CUP$AnalisisSintactico$stack.elementAt(CUP$AnalisisSintactico$top-6)).value;
 		
-        tablaSimbolos.salirAmbito();
+        tablaSimbolos.salirAmbito(false);
     
               CUP$AnalisisSintactico$result = parser.getSymbolFactory().newSymbol("clase",3, ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.elementAt(CUP$AnalisisSintactico$top-6)), ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.peek()), RESULT);
             }
@@ -512,7 +512,7 @@ parser.instrucciones = tablaSimbolos;
 		int idright = ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.peek()).right;
 		String id = (String)((java_cup.runtime.Symbol) CUP$AnalisisSintactico$stack.peek()).value;
 
-        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + "." + id);
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + "." + id,false);
     
               CUP$AnalisisSintactico$result = parser.getSymbolFactory().newSymbol("NT$1",30, ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.peek()), RESULT);
             }
@@ -529,9 +529,9 @@ parser.instrucciones = tablaSimbolos;
 		int tipomethodright = ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.peek()).right;
 		Object tipomethod = (Object)((java_cup.runtime.Symbol) CUP$AnalisisSintactico$stack.peek()).value;
 
-        tablaSimbolos.salirAmbito();
+        tablaSimbolos.salirAmbito(false);
         tablaSimbolos.agregarSimbolo(id, (String)tipomethod+"()", 0);
-        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + "." + id);
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + "." + id,false);
     
               CUP$AnalisisSintactico$result = parser.getSymbolFactory().newSymbol("NT$2",31, ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.peek()), RESULT);
             }
@@ -553,7 +553,7 @@ parser.instrucciones = tablaSimbolos;
 		int instsright = ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.elementAt(CUP$AnalisisSintactico$top-2)).right;
 		Object insts = (Object)((java_cup.runtime.Symbol) CUP$AnalisisSintactico$stack.elementAt(CUP$AnalisisSintactico$top-2)).value;
 		
-        tablaSimbolos.salirAmbito();
+        tablaSimbolos.salirAmbito(false);
     
               CUP$AnalisisSintactico$result = parser.getSymbolFactory().newSymbol("metodo",23, ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.elementAt(CUP$AnalisisSintactico$top-11)), ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.peek()), RESULT);
             }
@@ -896,7 +896,7 @@ parser.instrucciones = tablaSimbolos;
               Object RESULT =null;
 
         contadorSentencia++;
-        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".if" + contadorSentencia);
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".if" + contadorSentencia,true);
     
               CUP$AnalisisSintactico$result = parser.getSymbolFactory().newSymbol("NT$3",32, ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.peek()), RESULT);
             }
@@ -918,7 +918,7 @@ parser.instrucciones = tablaSimbolos;
 		int elsepartright = ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.peek()).right;
 		Object elsepart = (Object)((java_cup.runtime.Symbol) CUP$AnalisisSintactico$stack.peek()).value;
 		
-        tablaSimbolos.salirAmbito();
+        tablaSimbolos.salirAmbito(true);
     
               CUP$AnalisisSintactico$result = parser.getSymbolFactory().newSymbol("if",7, ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.elementAt(CUP$AnalisisSintactico$top-8)), ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.peek()), RESULT);
             }
@@ -929,8 +929,8 @@ parser.instrucciones = tablaSimbolos;
             {
               Object RESULT =null;
 
-        tablaSimbolos.salirAmbito();
-        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".else" + contadorSentencia);
+        tablaSimbolos.salirAmbito(true);
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".else" + contadorSentencia,true);
     
               CUP$AnalisisSintactico$result = parser.getSymbolFactory().newSymbol("NT$4",33, ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.peek()), RESULT);
             }
@@ -965,7 +965,7 @@ parser.instrucciones = tablaSimbolos;
               Object RESULT =null;
 
         contadorSentencia++;
-        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".while" + contadorSentencia);
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".while" + contadorSentencia,true);
     
               CUP$AnalisisSintactico$result = parser.getSymbolFactory().newSymbol("NT$5",34, ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.peek()), RESULT);
             }
@@ -984,7 +984,7 @@ parser.instrucciones = tablaSimbolos;
 		int instsright = ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.elementAt(CUP$AnalisisSintactico$top-1)).right;
 		Object insts = (Object)((java_cup.runtime.Symbol) CUP$AnalisisSintactico$stack.elementAt(CUP$AnalisisSintactico$top-1)).value;
 		
-        tablaSimbolos.salirAmbito();
+        tablaSimbolos.salirAmbito(true);
     
               CUP$AnalisisSintactico$result = parser.getSymbolFactory().newSymbol("while",9, ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.elementAt(CUP$AnalisisSintactico$top-7)), ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.peek()), RESULT);
             }
@@ -996,7 +996,7 @@ parser.instrucciones = tablaSimbolos;
               Object RESULT =null;
 
         contadorSentencia++;
-        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".for" + contadorSentencia);
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".for" + contadorSentencia,true);
     
               CUP$AnalisisSintactico$result = parser.getSymbolFactory().newSymbol("NT$6",35, ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.peek()), RESULT);
             }
@@ -1021,7 +1021,7 @@ parser.instrucciones = tablaSimbolos;
 		int instsright = ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.elementAt(CUP$AnalisisSintactico$top-1)).right;
 		Object insts = (Object)((java_cup.runtime.Symbol) CUP$AnalisisSintactico$stack.elementAt(CUP$AnalisisSintactico$top-1)).value;
 		
-        tablaSimbolos.salirAmbito();
+        tablaSimbolos.salirAmbito(true);
     
               CUP$AnalisisSintactico$result = parser.getSymbolFactory().newSymbol("for",10, ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.elementAt(CUP$AnalisisSintactico$top-11)), ((java_cup.runtime.Symbol)CUP$AnalisisSintactico$stack.peek()), RESULT);
             }

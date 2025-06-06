@@ -86,11 +86,11 @@ public class Editor extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(21, 21, 21)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(277, 277, 277)
+                .addGap(193, 193, 193)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -120,14 +120,15 @@ public class Editor extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (Solucion == 2){
             AnalisisLexico analizador= new AnalisisLexico();
-            AnalisisSintactico_v0 sintactico = new AnalisisSintactico_v0();            
+            //AnalisisSintactico_v0 sintactico = new AnalisisSintactico_v0();      
+            AnalisisSintactico sintactico = new AnalisisSintactico(); 
             String resultado = analizador.lex(jTextArea1.getText()+"\n");
             if(analizador.errorLexico.isEmpty())
             {
                 LinkedList<Simbolo> lexico = new LinkedList<>();
                 lexico.addAll(analizador.tablaLexico);
-                //boolean sintaxis = sintactico.parsear(jTextArea1.getText(),lexico);
-                boolean sintaxis = sintactico.parsear(lexico);
+                boolean sintaxis = sintactico.parsear(jTextArea1.getText(),lexico);
+                //boolean sintaxis = sintactico.parsear(lexico);
                 resultado += "La cadena es aceptada: "+sintaxis+" <br>";
                 if(sintaxis){
                     ExpressionEvaluator evaluar = new ExpressionEvaluator();

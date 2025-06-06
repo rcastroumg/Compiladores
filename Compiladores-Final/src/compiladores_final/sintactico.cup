@@ -70,11 +70,11 @@ clases ::= clases:clases clase:clase
 clase ::= ID:id DOS_PUNTOS CLASE
     {: 
         tablaSimbolos.agregarSimbolo(id, "clase", 0);
-        tablaSimbolos.entrarAmbito(id); 
+        tablaSimbolos.entrarAmbito(id,false); 
     :}
     LLAVE_ABIERTO declaraciones LLAVE_CERRADO
     {:
-        tablaSimbolos.salirAmbito();
+        tablaSimbolos.salirAmbito(false);
     :};
 
 
@@ -88,17 +88,17 @@ tipodeclaracion ::= declaracion:inst PUNTO_COMA
 
 metodo ::= ID:id 
     {:
-        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + "." + id);
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + "." + id,false);
     :}
     PARENTESIS_ABIERTO declaraparam PARENTESIS_CERRADO DOS_PUNTOS tipometodo:tipomethod 
     {:
-        tablaSimbolos.salirAmbito();
+        tablaSimbolos.salirAmbito(false);
         tablaSimbolos.agregarSimbolo(id, (String)tipomethod+"()", 0);
-        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + "." + id);
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + "." + id,false);
     :}
     LLAVE_ABIERTO instrucciones:insts retorno LLAVE_CERRADO
     {:
-        tablaSimbolos.salirAmbito();
+        tablaSimbolos.salirAmbito(false);
     :}
 ;
 
@@ -173,18 +173,18 @@ asignacion ::= ID:id IGUAL expresion:expr
 if ::= IF 
     {:
         contadorSentencia++;
-        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".if" + contadorSentencia);
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".if" + contadorSentencia,true);
     :}
     PARENTESIS_ABIERTO expresion:expr PARENTESIS_CERRADO LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO if_else_part:elsepart
     {:
-        tablaSimbolos.salirAmbito();
+        tablaSimbolos.salirAmbito(true);
     :}
     ;
 
 if_else_part ::= ELSE
     {:
-        tablaSimbolos.salirAmbito();
-        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".else" + contadorSentencia);
+        tablaSimbolos.salirAmbito(true);
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".else" + contadorSentencia,true);
     :}
     LLAVE_ABIERTO instrucciones:insts2 LLAVE_CERRADO
     | /* vacío */
@@ -193,22 +193,22 @@ if_else_part ::= ELSE
 while ::= WHILE 
     {:
         contadorSentencia++;
-        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".while" + contadorSentencia);
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".while" + contadorSentencia,true);
     :}
     PARENTESIS_ABIERTO  expresion:expr PARENTESIS_CERRADO LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO
     {:
-        tablaSimbolos.salirAmbito();
+        tablaSimbolos.salirAmbito(true);
     :}
     ;
 
 for ::= FOR 
     {:
         contadorSentencia++;
-        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".for" + contadorSentencia);
+        tablaSimbolos.entrarAmbito(tablaSimbolos.getAmbitoActual() + ".for" + contadorSentencia,true);
     :}
     PARENTESIS_ABIERTO asignacion:inicia PUNTO_COMA expresion:compara PUNTO_COMA asignacion:salto PARENTESIS_CERRADO LLAVE_ABIERTO instrucciones:insts LLAVE_CERRADO
     {:
-        tablaSimbolos.salirAmbito();
+        tablaSimbolos.salirAmbito(true);
     :}
     ;
 

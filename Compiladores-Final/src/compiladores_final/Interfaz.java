@@ -677,7 +677,7 @@ public class Interfaz extends javax.swing.JFrame {
         List<Variable> lvar = variables.getSimbolos();
         for(Variable var : lvar) {
             dtm.addRow(new Object[]{
-                var.nombre,var.tipo,var.ambito,var.tamanio,var.posicion
+                var.nombre,var.tipo,var.ambitoFinal,var.tamanio,var.posicion
             });
         }
     }
